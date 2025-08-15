@@ -23,4 +23,7 @@ du$D <- ifelse(du$RD == 1, du$D1, NA)
 dat.sim <- du[, c('A', 'B', 'C', 'D')]
 colnames(dat.sim) <- c('X2', 'Y', 'X1', 'W')
 
-# usethis::use_data(dat.sim)
+dat.sim <- dat.sim[!apply(is.na(dat.sim), 1, all), ]
+dat.sim <- dat.sim[, c('Y', 'X1', 'X2', 'W')]
+
+# usethis::use_data(dat.sim, overwrite = TRUE)

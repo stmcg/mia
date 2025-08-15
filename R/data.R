@@ -4,7 +4,7 @@
 #'
 #' @docType data
 #'
-#' @format A data frame that contains 10,000 rows and the following columns:
+#' @format A data frame that contains 9,297 rows and the following columns:
 #' \describe{
 #'   \item{\code{Y}}{A continuous outcome variable.}
 #'   \item{\code{X1}}{A binary predictor variable.}

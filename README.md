@@ -7,9 +7,9 @@
 <!-- badges: end -->
 
 The `iai` package implements methods to estimate conditional outcome
-means in settings with missing data and incomplete auxiliary variables.
-Specifically, this package implements the AF4 method in Mathur et
-al. (In preparation).
+means in settings with missingness-not-at-random and incomplete
+auxiliary variables. Specifically, this package implements the AF4
+method in Mathur et al. (In preparation).
 
 ## Installation
 
@@ -32,23 +32,23 @@ library(iai)
 #### Data Set
 
 We will use the example dataset `dat.sim` included the package. The
-dataset contains 10,000 observations with a continuous outcome `Y`, a
+dataset contains 9,297 observations with a continuous outcome `Y`, a
 binary auxiliary variable `W`, and binary predictors `X1` and `X2`. The
 first 10 rows of `dat.sim` are:
 
 ``` r
 dat.sim[1:10,]
-#>    X2        Y X1  W
-#> 1  NA       NA  0  0
-#> 2   1       NA  1 NA
-#> 3   1 6.066826  1  1
-#> 4  NA       NA NA NA
-#> 5   1 6.113787  1  1
-#> 6   1       NA  1 NA
-#> 7  NA       NA NA  0
-#> 8  NA       NA NA  0
-#> 9  NA       NA  1  0
-#> 10  1 6.439700  1 NA
+#>           Y X1 X2  W
+#> 1        NA  0 NA  0
+#> 2        NA  1  1 NA
+#> 3  6.066826  1  1  1
+#> 5  6.113787  1  1  1
+#> 6        NA  1  1 NA
+#> 7        NA NA NA  0
+#> 8        NA NA NA  0
+#> 9        NA  1 NA  0
+#> 10 6.439700  1  1 NA
+#> 11 6.859992  1 NA  1
 ```
 
 #### AF4 Method
@@ -87,5 +87,5 @@ The estimated outcome mean is given below:
 
 ``` r
 res$mean_est
-#> [1] 2.133511
+#> [1] 2.133502
 ```
