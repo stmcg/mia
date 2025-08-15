@@ -53,7 +53,7 @@ dat.sim[1:10,]
 
 #### AF4 Method
 
-The AF4 method estimates $E_{AF4}[ Y \mid X=x ]$, which is identified by
+The AF4 method estimates $E_{AF4}[ Y | X=x ]$, which is identified by
 $\int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW$ where
 $R_W$ and $R_X$ are indicators of non-missing values of $W$ and $X$,
 respectively, and $M$ is an indicator of a complete case pattern (i.e.,
@@ -71,8 +71,8 @@ specifying the following models:
 It also requires specifying the names of the variable(s) $X$ by
 `X_names` and their values $x$ in $E_{AF4} [ Y | X=x ]$ by `X_values`.
 
-An application of `af4` to estimate
-$E_{AF4} \big[ Y \mid X_1=0, X_2 = 1 \big]$ is given below:
+An application of `af4` to estimate $E_{AF4} [ Y | X_1=0, X_2 = 1 ]$ is
+given below:
 
 ``` r
 set.seed(1234)
@@ -81,7 +81,7 @@ res <- af4(data = dat.sim,
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 ```
 
-The estimate of $E_{AF4} [ Y | X=x ]$ is given below:
+The estimate of $E_{AF4} [ Y | X_1=0, X_2 = 1 ]$ is given below:
 
 ``` r
 res$mean_est
