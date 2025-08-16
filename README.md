@@ -79,11 +79,15 @@ set.seed(1234)
 res <- af4(data = dat.sim,
            X_names = c("X1", "X2"), X_values = c(0, 1),
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
-```
-
-The estimate of $E_{AF4} [ Y | X_1=0, X_2 = 1 ]$ is given below:
-
-``` r
-res$mean_est
-#> [1] 2.133519
+res
+#> AF4 METHOD FOR CONDITIONAL MEAN ESTIMATION
+#> ==========================================
+#> 
+#> Setting:
+#>   Outcome variable type:   continuous
+#>   Auxiliary variable type: binary
+#>   Predictor values:        X1=0, X2=1
+#> 
+#> Results:
+#>   Mean estimate:           2.1335
 ```

@@ -115,8 +115,11 @@ af4 <- function(data, X_names, X_values,
 
   out <- list(
     mean_est = mean(Y_mean),
-    fit_Y = fit_Y, fit_W = fit_W
+    fit_Y = fit_Y, fit_W = fit_W,
+    W_type = W_type, Y_type = Y_type,
+    X_names = X_names, X_values = X_values
   )
+  class(out) <- 'af4'
   return(out)
 }
 
