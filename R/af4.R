@@ -39,32 +39,32 @@ af4 <- function(data, X_names, X_values,
   # Checking that data has the correct column names
   for (i in 1:length(X_names)){
     if (!X_names[i] %in% colnames(data)){
-      stop(paste0("The observed data must include a column called ", X_names[i]))
+      stop(paste0("The observed data must include a column called ", X_names[i]), call. = FALSE)
     }
   }
   if (!'W' %in% colnames(data)){
-    stop("The observed data must include a column called 'W' indicating the auxiliary variable.")
+    stop("The observed data must include a column called 'W' indicating the auxiliary variable.", call. = FALSE)
   }
   if (!'Y' %in% colnames(data)){
-    stop("The observed data must include a column called 'Y' indicating the outcome variable.")
+    stop("The observed data must include a column called 'Y' indicating the outcome variable.", call. = FALSE)
   }
 
   # Checking variable types are appropriately set
   if (!missing(W_type)){
     if (!W_type %in% c('binary', 'categorical', 'normal')){
-      stop("W_type must be set to either 'binary', 'categorical', or 'normal'.")
+      stop("W_type must be set to either 'binary', 'categorical', or 'normal'.", call. = FALSE)
     }
     if (W_type == 'categorical'){
       if (length(unique(stats::na.omit(data$W))) == 2){
-        stop("W_type should be set to 'binary' when W only has two levels.")
+        stop("W_type should be set to 'binary' when W only has two levels.", call. = FALSE)
       } else if (!is.factor(data$W)){
-        stop("Auxiliary variables with type 'categorical' need to be encoded as factors in data.")
+        stop("Auxiliary variables with type 'categorical' need to be encoded as factors in data.", call. = FALSE)
       }
     }
   }
   if (!missing(Y_type)){
     if (!Y_type %in% c('binary', 'continuous')){
-      stop("Y_type must be set to either 'binary' or 'continuous'.")
+      stop("Y_type must be set to either 'binary' or 'continuous'.", call. = FALSE)
     }
   }
 
@@ -86,13 +86,8 @@ af4 <- function(data, X_names, X_values,
       W_type <- 'normal'
     }
   }
-  if (W_type == 'binary'){
-    fit_W <- stats::glm(W_model, data = data_fit_W, family = stats::binomial)
-  } else if (W_type == 'categorical'){
-    fit_W <- nnet::multinom(W_model, data = data_fit_W, trace = FALSE)
-  } else if (W_type == 'normal'){
-    fit_W <- stats::lm(W_model, data = data_fit_W)
-  }
+  fit_W <- safe_fit(variable_name = 'W', variable_type = W_type,
+                    formula = W_model, data = data_fit_W)
 
   # Simulation of W
   df_X <- data.frame(matrix(X_values, nrow = 1))
@@ -110,11 +105,11 @@ af4 <- function(data, X_names, X_values,
     }
   }
   df_XW <- cbind(df_X, data.frame(W = W_sim))
+  fit_Y <- safe_fit(variable_name = 'Y', variable_type = Y_type,
+                    formula = Y_model, data = data_fit_Y)
   if (Y_type == 'binary'){
-    fit_Y <- stats::glm(Y_model, data = data_fit_Y, family = stats::binomial)
     Y_mean <- stats::predict(fit_Y, type = 'response', newdata = df_XW)
   } else if (Y_type == 'continuous'){
-    fit_Y <- stats::lm(Y_model, data = data_fit_Y)
     Y_mean <- stats::predict(fit_Y, newdata = df_XW)
   }
 
@@ -140,3 +135,21 @@ sim_W <- function(df, fit, type, n_mc, levels){
   }
   return(W_sim)
 }
+
+safe_fit <- function(variable_type, variable_name, formula, data) {
+  fit <- tryCatch({
+    if (variable_type == 'binary'){
+      stats::glm(formula, data = data, family = stats::binomial())
+    } else if (variable_type == 'categorical'){
+      nnet::multinom(formula, data = data, trace = FALSE)
+    } else if (variable_type %in% c('normal', 'continuous')){
+      stats::lm(formula, data = data)
+    }
+  },
+  error = function(e) {
+    stop(paste0("Error in fitting the model for ", variable_name, ": ", conditionMessage(e)), call. = FALSE)
+  }
+  )
+  return(fit)
+}
+
