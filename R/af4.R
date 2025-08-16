@@ -15,7 +15,7 @@
 #' @param Y_type (Optional) Character string specifying the "type" of outcome variable. Options include \code{"binary"} and \code{"continuous"}.
 #' @param n_mc Integer specifying the number of Monte Carlo samples to use
 #'
-#' @return A list with the following elements:
+#' @return An object of class "af4". This object is a list with the following elements:
 #' \item{mean_est}{conditional outcome mean esitmate}
 #' \item{fit_W}{fitted model for W}
 #' \item{fit_Y}{fitted model for Y}
@@ -37,10 +37,10 @@ af4 <- function(data, X_names, X_values,
                 W_model, W_type, n_mc = 10000) {
 
   # Checking that data has the correct column names
-  for (i in 1:length(X_names)){
-    if (!X_names[i] %in% colnames(data)){
-      stop(paste0("The observed data must include a column called ", X_names[i]), call. = FALSE)
-    }
+  missing_cols <- setdiff(X_names, colnames(data))
+  if (length(missing_cols) > 0) {
+    stop(paste("The following columns are listed in X_names but missing from the data:",
+               paste(missing_cols, collapse = ", ")), call. = FALSE)
   }
   if (!'W' %in% colnames(data)){
     stop("The observed data must include a column called 'W' indicating the auxiliary variable.", call. = FALSE)
@@ -129,7 +129,7 @@ sim_W <- function(df, fit, type, n_mc, levels){
     W_sim <- stats::rbinom(n = n_mc, size = 1, prob = prob_W)
   } else if (type == 'categorical') {
     prob_W <- stats::predict(fit, type = 'probs', newdata = df)
-    W_sim <- sample(names(prob_W), size = n_mc, replace = TRUE, prob = prob_W)
+    W_sim <- sample(levels, size = n_mc, replace = TRUE, prob = prob_W)
     W_sim <- as.factor(W_sim)
   } else if (type == 'normal'){
     mean_W <- stats::predict(fit, newdata = df)

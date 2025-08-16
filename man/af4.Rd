@@ -24,7 +24,7 @@ af4(data, X_names, X_values, Y_model, Y_type, W_model, W_type, n_mc = 10000)
 \item{n_mc}{Integer specifying the number of Monte Carlo samples to use}
 }
 \value{
-A list with the following elements:
+An object of class "af4". This object is a list with the following elements:
 \item{mean_est}{conditional outcome mean esitmate}
 \item{fit_W}{fitted model for W}
 \item{fit_Y}{fitted model for Y}
