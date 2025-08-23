@@ -1,10 +1,12 @@
 test_that("af4 point estimate unchanged: binary W, continuous Y", {
   set.seed(1234)
   res <- af4(data = dat.sim,
-             X_names = c("X1", "X2"), X_values = c(0, 1),
+             X_names = c("X1", "X2"),
+             X_values_1 = c(0, 1), X_values_2 = c(0, 0),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
-  expect_equal(res$mean_est, 1.977175, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 1.977175, tolerance = 1e-5)
+  expect_equal(res$mean_est_2, -0.03232477, tolerance = 1e-5)
 })
 
 test_that("af4 point estimate unchanged: binary W, binary Y", {
@@ -13,10 +15,10 @@ test_that("af4 point estimate unchanged: binary W, binary Y", {
   dat.sim_contY$Y <- ifelse(dat.sim_contY$Y > median(dat.sim_contY$Y, na.rm = TRUE) / 2, 1, 0)
 
   res <- af4(data = dat.sim_contY,
-             X_names = c("X1", "X2"), X_values = c(0, 1),
+             X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
-  expect_equal(res$mean_est, 0.4274451, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 0.4274451, tolerance = 1e-5)
 })
 
 test_that("af4 point estimate unchanged: continuous W, continuous Y", {
@@ -26,10 +28,10 @@ test_that("af4 point estimate unchanged: continuous W, continuous Y", {
   dat.sim_contW[!is.na(dat.sim_contW$W), 'W'] <- rnorm(n = nrow(dat.temp), mean = dat.temp$W)
 
   res <- af4(data = dat.sim,
-             X_names = c("X1", "X2"), X_values = c(0, 1),
+             X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
-  expect_equal(res$mean_est, 1.976748, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 1.976748, tolerance = 1e-5)
 })
 
 test_that("af4 point estimate unchanged: categorical W, continuous Y", {
@@ -40,10 +42,10 @@ test_that("af4 point estimate unchanged: categorical W, continuous Y", {
   dat.sim_catW$W <- as.factor(dat.sim_catW$W)
 
   res <- af4(data = dat.sim_catW,
-             X_names = c("X1", "X2"), X_values = c(0, 1),
+             X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
-  expect_equal(res$mean_est, 1.977175, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 1.977175, tolerance = 1e-5)
 })
 
 ################################################################################

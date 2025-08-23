@@ -62,22 +62,27 @@ $E_{AF4}[ Y | X=x]$ by fitting models for the conditional mean of $Y$
 and conditional density of $W$ and performing Monte Carlo integration to
 compute the integral.
 
-The function `af4` implements the AF4 method. This function requires
-specifying the following models:
+The function `af4` implements the AF4 method to estimate
+$E_{AF4}[ Y | X=x_1 ]$ and, optionally, $E_{AF4}[ Y | X=x_2]$ as well as
+contrasts between $E_{AF4}[ Y | X=x_1 ]$ and $E_{AF4}[ Y | X=x_2 ]$
+(differences, ratios). This function requires specifying the following
+models:
 
 - `Y_model`: Formula for the outcome model
 - `W_model`: Formula for the auxiliary model
 
 It also requires specifying the names of the variable(s) $X$ by
-`X_names` and their values $x$ in $E_{AF4} [ Y | X=x ]$ by `X_values`.
+`X_names` and their values $x_1$ and $x_2$ by `X_values_1` and
+`X_values_2`, respectively.
 
-An application of `af4` to estimate $E_{AF4} [ Y | X_1=0, X_2 = 1 ]$ is
-given below:
+An application of `af4` to estimate $E_{AF4} [ Y | X_1=0, X_2 = 1 ]$ and
+$E_{AF4} [ Y | X_1=0, X_2 = 0 ]$ is given below:
 
 ``` r
 set.seed(1234)
 res <- af4(data = dat.sim,
-           X_names = c("X1", "X2"), X_values = c(0, 1),
+           X_names = c("X1", "X2"), 
+           X_values_1 = c(0, 1), X_values_2 = c(0, 0),
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 res
 #> AF4 METHOD FOR CONDITIONAL MEAN ESTIMATION
@@ -86,8 +91,13 @@ res
 #> Setting:
 #>   Outcome variable type:   continuous
 #>   Auxiliary variable type: binary
-#>   Predictor values:        X1=0, X2=1
 #> 
 #> Results:
+#>   Predictor values:        X1=0, X2=1
 #>   Mean estimate:           2.1335
+#> 
+#>   Predictor values:        X1=0, X2=0
+#>   Mean estimate:           -0.1636
+#> 
+#>   Mean difference estimate: 2.2972
 ```

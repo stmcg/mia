@@ -4,14 +4,29 @@
 \alias{af4}
 \title{af4}
 \usage{
-af4(data, X_names, X_values, Y_model, Y_type, W_model, W_type, n_mc = 10000)
+af4(
+  data,
+  X_names,
+  X_values_1,
+  X_values_2,
+  contrast_type,
+  Y_model,
+  Y_type,
+  W_model,
+  W_type,
+  n_mc = 10000
+)
 }
 \arguments{
 \item{data}{Data frame containing the observed data}
 
 \item{X_names}{Vector of character strings specifying the value of the predictor variable(s) X}
 
-\item{X_values}{Numeric scalar specifying the value of the predictor variable(s) X}
+\item{X_values_1}{Numeric vector specifying the value of the predictor variable(s) X, i.e. \eqn{x_1} in \eqn{E_{AF4} [ Y | X=x_1 ]}.}
+
+\item{X_values_2}{(Optional) Additional vector specifying the value of the predictor variable(s) X, i.e. \eqn{x_2} in \eqn{E_{AF4} [ Y | X=x_2 ]}.}
+
+\item{contrast_type}{(Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options include \code{"difference"}, \code{"ratio"}, and \code{"none"}.}
 
 \item{Y_model}{Model statement for the outcome model}
 
@@ -25,21 +40,25 @@ af4(data, X_names, X_values, Y_model, Y_type, W_model, W_type, n_mc = 10000)
 }
 \value{
 An object of class "af4". This object is a list with the following elements:
-\item{mean_est}{conditional outcome mean esitmate}
+\item{mean_est_1}{conditional outcome mean estimate under \code{X_values_1}}
+\item{mean_est_2}{conditional outcome mean estimate under \code{X_values_2}}
+\item{contrast_est}{contrast of conditional outcome mean estimates between \code{X_values_1} and \code{X_values_2}}
 \item{fit_W}{fitted model for W}
 \item{fit_Y}{fitted model for Y}
+\item{...}{additional elements}
 }
 \description{
 This function is a simple implementation of AF4 to estimate
 \deqn{
-E_{AF4} \big[ Y \mid X=x \big] = \int_{W} E \big[ Y \mid X=x, W, M=1 \big] \; p( W \mid X=x, R_W = R_X = 1 ) dW
+E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW
 }
-This function considers the setting of a univariate W and Y, where Monte Carlo integration is used to compute the integral.
+The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios). This function considers the setting of a univariate W and Y, where Monte Carlo integration is used to compute the integral.
 }
 \examples{
 
 af4(data = dat.sim,
-    X_names = c("X1", "X2"), X_values = c(0, 1),
+    X_names = c("X1", "X2"),
+    X_values_1 = c(0, 1), X_values_2 = c(0, 0),
     Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 
 
