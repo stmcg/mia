@@ -18,7 +18,7 @@ get_CI(
 
 \item{n_boot}{Numeric scalar specifying the number of bootstrap replicates to use}
 
-\item{type}{Character string specifying the type of confidence interval}
+\item{type}{Character string specifying the type of confidence interval. The options are \code{"norm"}, \code{"basic"}, \code{"perc"}, and \code{"bca"}.}
 
 \item{conf}{Numeric scalar specifying the level of the confidence interval. The default is \code{0.95}.}
 

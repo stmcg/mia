@@ -41,7 +41,8 @@
 af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
                 contrast_type,
                 Y_model, Y_type,
-                W_model, W_type, n_mc = 10000) {
+                W_model, W_type,
+                n_mc = 10000) {
 
   # Checking that data has the correct column names
   missing_cols <- setdiff(X_names, colnames(data))
@@ -54,6 +55,22 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
   }
   if (!'Y' %in% colnames(data)){
     stop("The observed data must include a column called 'Y' indicating the outcome variable.", call. = FALSE)
+  }
+
+  # Checking the model formulas
+  if (!inherits(Y_model, "formula")) {
+    stop("Y_model must be a formula, e.g., Y ~ W + X")
+  }
+  lhs_Y <- all.vars(Y_model[[2]])
+  if (length(lhs_Y) != 1 || lhs_Y != "Y") {
+    stop("The left-hand side of Y_model must be the variable 'Y'.")
+  }
+  if (!inherits(W_model, "formula")) {
+    stop("W_model must be a formula, e.g., W ~ X")
+  }
+  lhs_W <- all.vars(W_model[[2]])
+  if (length(lhs_W) != 1 || lhs_W != "W") {
+    stop("The left-hand side of W_model must be the variable 'W'.")
   }
 
   # Checking X_values_1 and X_values_2
