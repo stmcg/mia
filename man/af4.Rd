@@ -8,7 +8,7 @@ af4(
   data,
   X_names,
   X_values_1,
-  X_values_2,
+  X_values_2 = NULL,
   contrast_type,
   Y_model,
   Y_type,
@@ -55,7 +55,7 @@ E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 )
 The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios). This function considers the setting of a univariate W and Y, where Monte Carlo integration is used to compute the integral.
 }
 \examples{
-
+set.seed(1234)
 af4(data = dat.sim,
     X_names = c("X1", "X2"),
     X_values_1 = c(0, 1), X_values_2 = c(0, 0),

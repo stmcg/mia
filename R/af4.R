@@ -29,7 +29,7 @@
 #' Mathur M, Zhang W, McGrath S, Seaman S, Shpitser I. (In preparation). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}.
 #'
 #' @examples
-#'
+#' set.seed(1234)
 #' af4(data = dat.sim,
 #'     X_names = c("X1", "X2"),
 #'     X_values_1 = c(0, 1), X_values_2 = c(0, 0),
@@ -38,7 +38,7 @@
 #'
 #' @export
 
-af4 <- function(data, X_names, X_values_1, X_values_2,
+af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
                 contrast_type,
                 Y_model, Y_type,
                 W_model, W_type, n_mc = 10000) {
@@ -60,7 +60,7 @@ af4 <- function(data, X_names, X_values_1, X_values_2,
   if (length(X_names) != length(X_values_1)){
     stop("The arguments 'X_names' and 'X_values_1' must be of the same length.", call. = FALSE)
   }
-  if (!missing(X_values_2)){
+  if (!is.null(X_values_2)){
     if (length(X_names) != length(X_values_2)){
       stop("The arguments 'X_names' and 'X_values_2' must be of the same length.", call. = FALSE)
     }
@@ -68,8 +68,7 @@ af4 <- function(data, X_names, X_values_1, X_values_2,
       contrast_type <- 'difference'
     }
   } else {
-    X_values_2 <- NULL
-    contrast_type <- NA
+    contrast_type <- 'none'
   }
 
   # Checking variable types are appropriately set
@@ -144,12 +143,14 @@ af4 <- function(data, X_names, X_values_1, X_values_2,
       contrast_est <- Y_mean - Y_mean_2
     } else if (contrast_type == 'ratio'){
       contrast_est <- Y_mean / Y_mean_2
-    } else if (contrast_type != 'none'){
+    } else if (contrast_type == 'none'){
       contrast_est <- NA
     }
   } else {
     Y_mean_2 <- contrast_est <- NA
   }
+
+  args <- as.list(match.call())[-1]
 
   out <- list(
     mean_est_1 = Y_mean,
@@ -159,7 +160,9 @@ af4 <- function(data, X_names, X_values_1, X_values_2,
     W_type = W_type, Y_type = Y_type,
     X_names = X_names,
     X_values_1 = X_values_1, X_values_2 = X_values_2,
-    contrast_type = contrast_type
+    contrast_type = contrast_type,
+    n_mc = n_mc,
+    args = args
   )
   class(out) <- 'af4'
   return(out)

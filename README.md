@@ -75,8 +75,9 @@ It also requires specifying the names of the variable(s) $X$ by
 `X_names` and their values $x_1$ and $x_2$ by `X_values_1` and
 `X_values_2`, respectively.
 
-An application of `af4` to estimate $E_{AF4} [ Y | X_1=0, X_2 = 1 ]$ and
-$E_{AF4} [ Y | X_1=0, X_2 = 0 ]$ is given below:
+An application of `af4` to estimate $E_{AF4} [ Y | X=(0, 1)^\top ]$ and
+$E_{AF4} [ Y | X = (0, 0)^\top ]$ as well as their differene is given
+below:
 
 ``` r
 set.seed(1234)
@@ -99,5 +100,30 @@ res
 #>   Predictor values:        X1=0, X2=0
 #>   Mean estimate:           -0.1636
 #> 
-#>   Mean difference estimate: 2.2972
+#>   Mean difference estimate: 2.2971
+```
+
+We can obtain 95% confidence intervals around our estimates by applying
+the `get_CI` function to the output of the `af4` function. The `get_CI`
+function performs nonparametric bootstrap. Here, we use the percentile
+method with 100 bootstrap replicates (for ease of computation):
+
+``` r
+get_CI(res, n_boot = 100, type = 'perc')
+#> BOOTSTRAP CONFIDENCE INTERVALS FOR AF4 METHOD
+#> =============================================
+#> 
+#> Setting:
+#>   Confidence level:        0.95
+#>   Interval type:           perc
+#>   Number of replicates:    100
+#> 
+#> Results:
+#>   Predictor values:        X1=0, X2=1
+#>   CI for mean:             (2.0350, 2.2495)
+#> 
+#>   Predictor values:        X1=0, X2=0
+#>   CI for mean:             (-0.2638, -0.0588)
+#> 
+#>   CI for difference:       (2.1565, 2.4539)
 ```

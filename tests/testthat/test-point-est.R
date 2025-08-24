@@ -2,11 +2,24 @@ test_that("af4 point estimate unchanged: binary W, continuous Y", {
   set.seed(1234)
   res <- af4(data = dat.sim,
              X_names = c("X1", "X2"),
-             X_values_1 = c(0, 1), X_values_2 = c(0, 0),
+             X_values_1 = c(0, 1), X_values_2 = c(0, 0), contrast_type = 'none',
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
   expect_equal(res$mean_est_1, 1.977175, tolerance = 1e-5)
   expect_equal(res$mean_est_2, -0.03232477, tolerance = 1e-5)
+})
+
+test_that("af4 bootstrap CIs unchanged: binary W, continuous Y", {
+  set.seed(1234)
+  res <- af4(data = dat.sim,
+             X_names = c("X1", "X2"),
+             X_values_1 = c(0, 1), X_values_2 = c(0, 0),
+             Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
+  set.seed(1234)
+  res_ci <- get_CI(res, n_boot = 100, type = 'perc')
+
+  expect_equal(res_ci$ci_1$percent[4], 2.039779, tolerance = 1e-5)
+  expect_equal(res_ci$ci_1$percent[5], 2.247151, tolerance = 1e-5)
 })
 
 test_that("af4 point estimate unchanged: binary W, binary Y", {

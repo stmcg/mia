@@ -1,0 +1,121 @@
+#' Bootstrap-based confidence intervals for AF4
+#'
+#' This function applies nonparametric bootstrap to construct confidence intervals around the conditional mean estimates obtained by \code{\link{af4}}. This function is a wrapper for the \code{\link[boot]{boot}} and \code{\link[boot]{boot.ci}} functions from the \pkg{boot} package.
+#'
+#' @param af4_res Output from the \code{af4} function.
+#' @param n_boot Numeric scalar specifying the number of bootstrap replicates to use
+#' @param type Character string specifying the type of confidence interval. The options are \code{"norm"}, \code{"basic"}, \code{"perc"}, and \code{"bca"}.
+#' @param conf Numeric scalar specifying the level of the confidence interval. The default is \code{0.95}.
+#' @param boot_args A list of additional arguments to pass to the \code{\link[boot]{boot}} function. Note that this includes parallelization options.
+#' @param boot.ci_args A list of additional arguments to pass to the \code{\link[boot]{boot.ci}} function
+#'
+#' @return An object of class "af4_ci". This object is a list with the following elements:
+#' \item{ci_1}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_1} in  \code{\link{af4}}.}
+#' \item{ci_2}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_2} in  \code{\link{af4}} (if applicable).}
+#' \item{ci_contrast}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the contrast between mean under \code{X_values_1} versus \code{X_values_2} in \code{\link{af4}} (if applicable).}
+#' \item{bres}{An object of class "boot" which contains the output of the \code{\link[boot]{boot}} function. Users can access the bootstrap replicates through the element \code{t} in this object.}
+#' \item{...}{additional elements}
+#'
+#' @examples
+#' set.seed(1234)
+#' res <- af4(data = dat.sim,
+#'            X_names = c("X1", "X2"),
+#'            X_values_1 = c(0, 1), X_values_2 = c(0, 0),
+#'            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
+#' res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
+#' res_ci
+#'
+#'
+#' @export
+#'
+get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
+                   boot_args = list(), boot.ci_args = list()) {
+
+  # Error checking for misunderstandings about how arguments are based into the boot and boot.ci functions
+  if (length(type) > 1){
+    stop("The argument 'type' must be of length 1.", call. = FALSE)
+  }
+  if (length(conf) > 1){
+    stop("The argument 'conf' must be of length 1.", call. = FALSE)
+  }
+  if (!type %in% c('norm', 'basic', 'perc', 'bca')){
+    stop("The argument 'type' must be set to either 'norm', 'basic', 'perc', or 'bca'.", call. = FALSE)
+  }
+  if ('R' %in% names(boot_args)){
+    warning("The element 'R' in the argument 'boot_args' is not used. The number of bootstrap replicates is instead specified by the argument 'n_boot' in the get_CI function", call. = FALSE)
+  }
+  if ('type' %in% names(boot.ci_args)){
+    warning("The element 'type' in the argument 'boot.ci_args' is not used. The type of confidence interval is instead specified by the argument 'type' in the get_CI function", call. = FALSE)
+  }
+  if ('conf' %in% names(boot.ci_args)){
+    warning("The element 'conf' in the argument 'boot.ci_args' is not used. The level of confidence interval is instead specified by the argument 'conf' in the get_CI function", call. = FALSE)
+  }
+
+  boot_func <- function(data, i){
+    dat_boot    <- data[i, ]
+    fit <- af4(data = dat_boot,
+               X_names = af4_res$X_names,
+               X_values_1 = af4_res$X_values_1,
+               X_values_2 = af4_res$X_values_2,
+               contrast_type = af4_res$contrast_type,
+               Y_model = eval(af4_res$args$Y_model),
+               W_model = eval(af4_res$args$W_model),
+               Y_type = af4_res$Y_type, W_type = af4_res$W_type,
+               n_mc = af4_res$n_mc)
+    if (!is.null(af4_res$X_values_2)){
+      if (af4_res$contrast_type == 'none'){
+        out <- c(fit$mean_est_1, fit$mean_est_2)
+      } else {
+        out <- c(fit$mean_est_1, fit$mean_est_2, fit$contrast_est)
+      }
+    } else {
+      out <- c(fit$mean_est_1)
+    }
+    return(out)
+  }
+
+  boot_args$data <- eval(af4_res$args$data)
+  boot_args$statistic <- boot_func
+  boot_args$R <- n_boot
+  bres <- do.call(boot::boot, boot_args)
+  bres$call <- quote(do.call(boot::boot, boot_args))
+
+  boot.ci_args$boot.out <- bres
+  boot.ci_args$type <- type
+  boot.ci_args$conf <- conf
+  ci_1 <- bca_safe_ci(boot.ci_args, index = 1)
+  ci_2 <- NULL; ci_contrast <- NULL
+  if (!is.null(af4_res$X_values_2)){
+    ci_2 <- bca_safe_ci(boot.ci_args, index = 2)
+    if (af4_res$contrast_type != 'none'){
+      ci_contrast <- bca_safe_ci(boot.ci_args, index = 3)
+    }
+  }
+
+  out <- list(ci_1 = ci_1, ci_2 = ci_2, ci_contrast = ci_contrast, bres = bres,
+              n_boot = n_boot, type = type, conf = conf, af4_res = af4_res)
+  class(out) <- 'af4_ci'
+
+  return(out)
+
+}
+
+bca_safe_ci <- function(boot.ci_args, index){
+  boot.ci_args$index <- index
+
+  if (boot.ci_args$type == 'bca'){
+    cis <- tryCatch({
+      do.call(boot::boot.ci, boot.ci_args)
+    },
+    error = function(e) {
+      message(paste0("Error in obtaining the adjusted bootstrap percentile (BCa) interval. The percentile method will be used instead. Error message from the boot::boot.ci function: ", conditionMessage(e)), call. = FALSE)
+      boot.ci_args$type <- 'perc'
+      do.call(boot::boot.ci, boot.ci_args)
+    })
+  } else {
+    cis <- do.call(boot::boot.ci, boot.ci_args)
+  }
+  cis$call <- quote(do.call(boot::boot.ci, boot.ci_args))
+  return(cis)
+}
+
