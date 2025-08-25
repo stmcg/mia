@@ -2,21 +2,21 @@
 #'
 #' This function implements the AF4 method (Mathur et al., In preparation). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates
 #' \deqn{
-#' E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW
+#' E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW.
 #' }
-#' The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios). Monte Carlo integration is used to compute the integral.
+#' The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios).
 #'
-#' @param data Data frame containing the observed data
-#' @param X_names Vector of character strings specifying the value of the predictor variable(s) X
-#' @param X_values_1 Numeric vector specifying the value of the predictor variable(s) X, i.e. \eqn{x_1} in \eqn{E_{AF4} [ Y | X=x_1 ]}.
-#' @param X_values_2 (Optional) Additional vector specifying the value of the predictor variable(s) X, i.e. \eqn{x_2} in \eqn{E_{AF4} [ Y | X=x_2 ]}.
-#' @param contrast_type (Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options include \code{"difference"}, \code{"ratio"}, and \code{"none"}.
-#' @param Y_model Model formula for the outcome model
-#' @param W_model Model formula for the auxiliary variable. If the auxiliary variable is multivariate, this argument should be a list of model formulas for the components of the auxiliary variable. The components of the auxiliary variable will be simulated in the order that they appear in the list.
-#' @param W_type  (Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options include \code{"binary"}, \code{"categorical"}, and \code{"normal"}.
-#' @param Y_type (Optional) Character string specifying the "type" of outcome variable. Options include \code{"binary"} and \code{"continuous"}.
-#' @param n_mc Integer specifying the number of Monte Carlo samples to use
-#' @param return_simulated_data Logical scalar specifying whether to return the simulated data set. The default is \code{FALSE}.
+#' @param data Data frame containing the observed data.
+#' @param X_names Vector of character strings specifying the name(s) of the predictor variable(s) \eqn{X}.
+#' @param X_values_1 Numeric vector specifying the value of the predictor variable(s) \eqn{X}, i.e. \eqn{x_1} in \eqn{E_{AF4} [ Y | X=x_1 ]}.
+#' @param X_values_2 (Optional) Numeric vector specifying an additional value of the predictor variable(s) \eqn{X}, i.e. \eqn{x_2} in \eqn{E_{AF4} [ Y | X=x_2 ]}.
+#' @param contrast_type (Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options are \code{"difference"}, \code{"ratio"}, and \code{"none"}.
+#' @param Y_model Formula for the outcome model.
+#' @param W_model Formula for the auxiliary variable model. If the auxiliary variable is multivariate, this argument should be a list of model formulas, one for each component. The components will be simulated in the order they appear in the list.
+#' @param W_type  (Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options are \code{"binary"}, \code{"categorical"}, and \code{"normal"}. If this not supplied, the type will be inferred from the corresponding column in \code{data}.
+#' @param Y_type (Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}.  If this not supplied, the type will be inferred from the corresponding column in \code{data}.
+#' @param n_mc Integer specifying the number of Monte Carlo samples to use.
+#' @param return_simulated_data Logical scalar indicating whether to return the simulated data set(s) containing the predictors and simulated auxiliary variable. Setting this argument to \code{TRUE} can substantially increase the size of the returned object, particularly when \code{n_mc} is large. The default is \code{FALSE}.
 #'
 #' @return An object of class "af4". This object is a list with the following elements:
 #' \item{mean_est_1}{conditional outcome mean estimate under \code{X_values_1}}
@@ -24,8 +24,18 @@
 #' \item{contrast_est}{contrast of conditional outcome mean estimates between \code{X_values_1} and \code{X_values_2}}
 #' \item{fit_W}{a list of fitted model(s) for W}
 #' \item{fit_Y}{fitted model for Y}
-#' \item{simulated_data}{a list, where the first element is the simulated data set under \code{X_values_1} and the second element is the simulated data set under \code{X_values_2}. This element is set to \code{NULL} unless \code{return_simulated_data} is set to \code{TRUE}.}
+#' \item{simulated_data}{a list, where the first element is the simulated data set under \code{X_values_1} and the second element is the simulated data set under \code{X_values_2}. The simulated data sets contain the predictors and simulated auxiliary variable. This element is set to \code{NULL} unless \code{return_simulated_data} is set to \code{TRUE}.}
 #' \item{...}{additional elements}
+#'
+#' @details
+#'
+#' \strong{Estimation algorithm:}
+#'
+#' The algorithm consists of two steps. In the first step, one fits a model for the conditional outcome mean \eqn{E [ Y | X=x, W, M=1 ]} and the conditional density of the auxiliary variables \eqn{p( W | X=x, R_W = R_X = 1 )}. When \eqn{W} is multivariate, i.e., \eqn{W = (W_1, \dots, W_p)^\top}, one uses the decomposition
+#' \deqn{p( W | X=x, R_W = R_X = 1 ) = \prod_{j = 1}^p p( W_j | X=x, W_1, \dots, W_{j-1}, R_W = R_X = 1 )}
+#' and fits models for the components \eqn{p( W_j | X=x, W_1, \dots, W_{j-1}, R_W = R_X = 1 )}.
+#'
+#' In the second step, Monte Carlo integration is used to compute the integral in the identification formula for \eqn{E_{AF4} [ Y | X=x ]} based on the fitted models in the first step. More specifically, for iteration \eqn{i}, the following algorithm is performed. The value of \eqn{W} is first simulated from its estimated conditional distribution. When \eqn{W} is multivariate, the components of \eqn{W} are simulated sequentially from their fitted models. That is, \eqn{W_1} is simulated conditional on \eqn{x}, \eqn{W_2} is simulated conditional on \eqn{x, W_1}, and so on. Then, the mean of \eqn{Y} is estimated conditional on \eqn{x, W}. Finally, the average of the estimated means (across all iterations \eqn{i}) is taken as the estimate of \eqn{E_{AF4} [ Y | X=x ]}.
 #'
 #' @references
 #' Mathur M, Zhang W, McGrath S, Seaman S, Shpitser I. (In preparation). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}.
