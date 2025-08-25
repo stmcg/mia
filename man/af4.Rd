@@ -32,7 +32,7 @@ af4(
 
 \item{Y_type}{(Optional) Character string specifying the "type" of outcome variable. Options include \code{"binary"} and \code{"continuous"}.}
 
-\item{W_model}{Model statement for the auxiliary variable}
+\item{W_model}{Model statement for the auxiliary variable. If the auxiliary variable is multivariate, this argument should be a list of model statements for the components of the auxiliary variable. The components of the auxiliary variable will be simulated in the order that they appear in the list.}
 
 \item{W_type}{(Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options include \code{"binary"}, \code{"categorical"}, and \code{"normal"}.}
 
@@ -52,7 +52,7 @@ This function is a simple implementation of AF4 to estimate
 \deqn{
 E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW
 }
-The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios). This function considers the setting of a univariate W and Y, where Monte Carlo integration is used to compute the integral.
+The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios). Monte Carlo integration is used to compute the integral.
 }
 \examples{
 set.seed(1234)

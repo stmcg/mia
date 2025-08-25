@@ -25,24 +25,26 @@ print.af4 <- function(x, digits = 4, ...){
   cat('AF4 METHOD FOR CONDITIONAL MEAN ESTIMATION\n')
   cat("==========================================\n\n")
   cat("Setting:\n")
-  cat(sprintf("  %-24s %s\n", "Outcome variable type:", x$Y_type))
-  cat(sprintf("  %-24s %s\n", "Auxiliary variable type:", x$W_type))
+  cat(sprintf("  %-28s %s\n", "Outcome variable type:", x$Y_type))
+  W_info_components <- paste0(x$W_type, " (", x$W_names, ")")
+  W_info <- paste(W_info_components, collapse = ", ")
+  cat(sprintf("  %-28s %s\n", "Auxiliary variable(s) type:", W_info))
 
 
   cat("\nResults:\n")
   X_temp <- paste(paste0(x$X_names, "=", x$X_values_1), collapse = ", ")
-  cat(sprintf("  %-24s %s\n", "Predictor values:", X_temp))
-  cat(sprintf("  %-24s %s\n", "Mean estimate:",
+  cat(sprintf("  %-28s %s\n", "Predictor values:", X_temp))
+  cat(sprintf("  %-28s %s\n", "Mean estimate:",
               formatC(x$mean_est_1, digits = digits, format = "f")))
 
   if (!is.null(x$X_values_2)){
     X_temp_2 <- paste(paste0(x$X_names, "=", x$X_values_2), collapse = ", ")
-    cat(sprintf("\n  %-24s %s\n", "Predictor values:", X_temp_2))
-    cat(sprintf("  %-24s %s\n", "Mean estimate:",
+    cat(sprintf("\n  %-28s %s\n", "Predictor values:", X_temp_2))
+    cat(sprintf("  %-28s %s\n", "Mean estimate:",
                 formatC(x$mean_est_2, digits = digits, format = "f")))
 
     if (!is.na(x$contrast_est)){
-      cat(sprintf("\n  %-24s %s\n", paste0('Mean ', x$contrast_type, ' estimate:'),
+      cat(sprintf("\n  %-28s %s\n", paste0('Mean ', x$contrast_type, ' estimate:'),
                   formatC(x$contrast_est, digits = digits, format = "f")))
     }
   }

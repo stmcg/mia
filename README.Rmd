@@ -50,11 +50,11 @@ The AF4 method estimates $E_{AF4}[ Y | X=x ]$, which is identified by $\int_{W} 
 The function `af4` implements the AF4 method to estimate $E_{AF4}[ Y | X=x_1 ]$ and, optionally, $E_{AF4}[ Y | X=x_2]$ as well as contrasts between $E_{AF4}[ Y | X=x_1 ]$ and $E_{AF4}[ Y | X=x_2 ]$ (differences, ratios). This function requires specifying the following models: 
 
 * `Y_model`: Formula for the outcome model
-* `W_model`: Formula for the auxiliary model
+* `W_model`: Formula for the auxiliary model when the auxiliary variable is univariate, or a list of formulas for each component of the auxiliary variable
 
 It also requires specifying the names of the variable(s) $X$ by `X_names` and their values $x_1$ and $x_2$ by `X_values_1` and `X_values_2`, respectively. 
 
-An application of `af4` to estimate $E_{AF4} [ Y | X=(0, 1)^\top ]$ and $E_{AF4} [ Y | X = (0, 0)^\top ]$ as well as their differene is given below:
+An application of `af4` to estimate $E_{AF4} [ Y | X=(0, 1)^\top ]$ and $E_{AF4} [ Y | X = (0, 0)^\top ]$ as well as their difference is given below:
 
 ```{r}
 set.seed(1234)

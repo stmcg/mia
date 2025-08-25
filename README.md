@@ -69,14 +69,16 @@ contrasts between $E_{AF4}[ Y | X=x_1 ]$ and $E_{AF4}[ Y | X=x_2 ]$
 models:
 
 - `Y_model`: Formula for the outcome model
-- `W_model`: Formula for the auxiliary model
+- `W_model`: Formula for the auxiliary model when the auxiliary variable
+  is univariate, or a list of formulas for each component of the
+  auxiliary variable
 
 It also requires specifying the names of the variable(s) $X$ by
 `X_names` and their values $x_1$ and $x_2$ by `X_values_1` and
 `X_values_2`, respectively.
 
 An application of `af4` to estimate $E_{AF4} [ Y | X=(0, 1)^\top ]$ and
-$E_{AF4} [ Y | X = (0, 0)^\top ]$ as well as their differene is given
+$E_{AF4} [ Y | X = (0, 0)^\top ]$ as well as their difference is given
 below:
 
 ``` r
@@ -90,17 +92,17 @@ res
 #> ==========================================
 #> 
 #> Setting:
-#>   Outcome variable type:   continuous
-#>   Auxiliary variable type: binary
+#>   Outcome variable type:       continuous
+#>   Auxiliary variable type(s):  binary (W)
 #> 
 #> Results:
-#>   Predictor values:        X1=0, X2=1
-#>   Mean estimate:           2.1335
+#>   Predictor values:            X1=0, X2=1
+#>   Mean estimate:               2.1335
 #> 
-#>   Predictor values:        X1=0, X2=0
-#>   Mean estimate:           -0.1636
+#>   Predictor values:            X1=0, X2=0
+#>   Mean estimate:               -0.1636
 #> 
-#>   Mean difference estimate: 2.2971
+#>   Mean difference estimate:    2.2971
 ```
 
 We can obtain 95% confidence intervals around our estimates by applying
