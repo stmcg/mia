@@ -71,8 +71,8 @@ test_that("af4 point estimate unchanged: multivariate W, continuous Y", {
              Y_model = Y ~ W * X1 * X2,
              W_model = list(W ~ X1 * X2, W2 ~ W + X1 + X2))
 
-  expect_equal(res$mean_est_1, 1.033707, tolerance = 1e-5)
-  expect_equal(res$mean_est_2, -0.09895814, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 1.976322, tolerance = 1e-5)
+  expect_equal(res$mean_est_2, -0.03241571, tolerance = 1e-5)
 })
 
 ################################################################################

@@ -1,6 +1,6 @@
-#' af4
+#' AF4 Method
 #'
-#' This function is a simple implementation of AF4 to estimate
+#' This function implements the AF4 method (Mathur et al., In preparation). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates
 #' \deqn{
 #' E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW
 #' }
@@ -11,18 +11,20 @@
 #' @param X_values_1 Numeric vector specifying the value of the predictor variable(s) X, i.e. \eqn{x_1} in \eqn{E_{AF4} [ Y | X=x_1 ]}.
 #' @param X_values_2 (Optional) Additional vector specifying the value of the predictor variable(s) X, i.e. \eqn{x_2} in \eqn{E_{AF4} [ Y | X=x_2 ]}.
 #' @param contrast_type (Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options include \code{"difference"}, \code{"ratio"}, and \code{"none"}.
-#' @param Y_model Model statement for the outcome model
-#' @param W_model Model statement for the auxiliary variable. If the auxiliary variable is multivariate, this argument should be a list of model statements for the components of the auxiliary variable. The components of the auxiliary variable will be simulated in the order that they appear in the list.
+#' @param Y_model Model formula for the outcome model
+#' @param W_model Model formula for the auxiliary variable. If the auxiliary variable is multivariate, this argument should be a list of model formulas for the components of the auxiliary variable. The components of the auxiliary variable will be simulated in the order that they appear in the list.
 #' @param W_type  (Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options include \code{"binary"}, \code{"categorical"}, and \code{"normal"}.
 #' @param Y_type (Optional) Character string specifying the "type" of outcome variable. Options include \code{"binary"} and \code{"continuous"}.
 #' @param n_mc Integer specifying the number of Monte Carlo samples to use
+#' @param return_simulated_data Logical scalar specifying whether to return the simulated data set. The default is \code{FALSE}.
 #'
 #' @return An object of class "af4". This object is a list with the following elements:
 #' \item{mean_est_1}{conditional outcome mean estimate under \code{X_values_1}}
 #' \item{mean_est_2}{conditional outcome mean estimate under \code{X_values_2}}
 #' \item{contrast_est}{contrast of conditional outcome mean estimates between \code{X_values_1} and \code{X_values_2}}
-#' \item{fit_W}{fitted model for W}
+#' \item{fit_W}{a list of fitted model(s) for W}
 #' \item{fit_Y}{fitted model for Y}
+#' \item{simulated_data}{a list, where the first element is the simulated data set under \code{X_values_1} and the second element is the simulated data set under \code{X_values_2}. This element is set to \code{NULL} unless \code{return_simulated_data} is set to \code{TRUE}.}
 #' \item{...}{additional elements}
 #'
 #' @references
@@ -41,9 +43,9 @@
 af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
                 contrast_type,
                 Y_model, Y_type,
-                W_model,
-                W_type,
-                n_mc = 10000) {
+                W_model, W_type,
+                n_mc = 10000,
+                return_simulated_data = FALSE) {
 
   # Checking that data has the correct column names
   missing_cols <- setdiff(X_names, colnames(data))
@@ -103,7 +105,7 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
   # Checking variable types are appropriately set
   if (!missing(W_type)){
     for (i in 1:n_W){
-      stop_message_beginning <- pasteo("Error in the specification of element ", i, " in 'W_type.' ")
+      stop_message_beginning <- paste0("Error in the specification of element ", i, " in 'W_type.' ")
       if (!W_type[i] %in% c('binary', 'categorical', 'normal')){
         stop(paste0(stop_message_beginning, "W_type must be set to either 'binary', 'categorical', or 'normal'."), call. = FALSE)
       }
@@ -183,6 +185,7 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     }
   } else {
     Y_mean_2 <- contrast_est <- NA
+    df_XW_2 <- NULL
   }
 
   args <- as.list(match.call())[-1]
@@ -200,6 +203,12 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     n_mc = n_mc,
     args = args
   )
+  if (return_simulated_data){
+    out$simulated_data <- list(
+      sim_data_1 = df_XW,
+      sim_data_2 = df_XW_2
+    )
+  }
   class(out) <- 'af4'
   return(out)
 }
@@ -210,7 +219,7 @@ sim_W_all <- function(X_values, X_names, data_fit_W, fit, type, n_mc, W_names){
   for (i in 1:length(fit)){
     W_sim <- sim_W_individual(df = df, fit = fit[[i]], type = type[i], n_mc = n_mc,
                               levels = levels(data_fit_W[[W_names[i]]]))
-    df[, W_names] <- W_sim
+    df[, W_names[i]] <- W_sim
   }
   return(df)
 }

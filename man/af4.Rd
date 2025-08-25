@@ -2,7 +2,7 @@
 % Please edit documentation in R/af4.R
 \name{af4}
 \alias{af4}
-\title{af4}
+\title{AF4 Method}
 \usage{
 af4(
   data,
@@ -14,7 +14,8 @@ af4(
   Y_type,
   W_model,
   W_type,
-  n_mc = 10000
+  n_mc = 10000,
+  return_simulated_data = FALSE
 )
 }
 \arguments{
@@ -28,27 +29,30 @@ af4(
 
 \item{contrast_type}{(Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options include \code{"difference"}, \code{"ratio"}, and \code{"none"}.}
 
-\item{Y_model}{Model statement for the outcome model}
+\item{Y_model}{Model formula for the outcome model}
 
 \item{Y_type}{(Optional) Character string specifying the "type" of outcome variable. Options include \code{"binary"} and \code{"continuous"}.}
 
-\item{W_model}{Model statement for the auxiliary variable. If the auxiliary variable is multivariate, this argument should be a list of model statements for the components of the auxiliary variable. The components of the auxiliary variable will be simulated in the order that they appear in the list.}
+\item{W_model}{Model formula for the auxiliary variable. If the auxiliary variable is multivariate, this argument should be a list of model formulas for the components of the auxiliary variable. The components of the auxiliary variable will be simulated in the order that they appear in the list.}
 
 \item{W_type}{(Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options include \code{"binary"}, \code{"categorical"}, and \code{"normal"}.}
 
 \item{n_mc}{Integer specifying the number of Monte Carlo samples to use}
+
+\item{return_simulated_data}{Logical scalar specifying whether to return the simulated data set. The default is \code{FALSE}.}
 }
 \value{
 An object of class "af4". This object is a list with the following elements:
 \item{mean_est_1}{conditional outcome mean estimate under \code{X_values_1}}
 \item{mean_est_2}{conditional outcome mean estimate under \code{X_values_2}}
 \item{contrast_est}{contrast of conditional outcome mean estimates between \code{X_values_1} and \code{X_values_2}}
-\item{fit_W}{fitted model for W}
+\item{fit_W}{a list of fitted model(s) for W}
 \item{fit_Y}{fitted model for Y}
+\item{simulated_data}{a list, where the first element is the simulated data set under \code{X_values_1} and the second element is the simulated data set under \code{X_values_2}. This element is set to \code{NULL} unless \code{return_simulated_data} is set to \code{TRUE}.}
 \item{...}{additional elements}
 }
 \description{
-This function is a simple implementation of AF4 to estimate
+This function implements the AF4 method (Mathur et al., In preparation). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates
 \deqn{
 E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW
 }
