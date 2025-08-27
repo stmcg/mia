@@ -22,13 +22,13 @@
 #'            X_names = c("X1", "X2"),
 #'            X_values_1 = c(0, 1), X_values_2 = c(0, 0),
 #'            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
-#' res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
+#' res_ci <- get_CI(af4_res = res, n_boot = 50)
 #' res_ci
 #'
 #'
 #' @export
 #'
-get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
+get_CI <- function(af4_res, n_boot = 1000, type = 'perc', conf = 0.95,
                    boot_args = list(), boot.ci_args = list()) {
 
   # Error checking for misunderstandings about how arguments are based into the boot and boot.ci functions
@@ -105,10 +105,12 @@ bca_safe_ci <- function(boot.ci_args, index){
 
   if (boot.ci_args$type == 'bca'){
     cis <- tryCatch({
+      # Can uncomment the next line to enforce jackknife method. May incorporate it into try-catch statements if regular bca fails
+      # boot.ci_args$L <- boot::empinf(boot.ci_args$boot.out, type = "jack")
       do.call(boot::boot.ci, boot.ci_args)
     },
     error = function(e) {
-      message(paste0("Error in obtaining the adjusted bootstrap percentile (BCa) interval. The percentile method will be used instead. Error message from the boot::boot.ci function: ", conditionMessage(e)), call. = FALSE)
+      message(paste0("Error in obtaining the adjusted bootstrap percentile (BCa) interval. The percentile method will be used instead. Error message from the boot::boot.ci function: ", conditionMessage(e)))
       boot.ci_args$type <- 'perc'
       do.call(boot::boot.ci, boot.ci_args)
     })

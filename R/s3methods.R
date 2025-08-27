@@ -84,19 +84,19 @@ print.af4_ci <- function(x, digits = 4, ...){
   cat(sprintf("  %-24s %s\n", "Interval type:", x$type))
   cat(sprintf("  %-24s %s\n", "Number of replicates:", x$n_boot))
 
-  ci_res_name <- x$type
-  if (ci_res_name == 'perc'){
-    ci_res_name <- 'percent'
-  } else if (ci_res_name == 'norm'){
-    ci_res_name <- 'normal'
-  }
+  # ci_res_name <- x$type
+  # if (ci_res_name == 'perc'){
+  #   ci_res_name <- 'percent'
+  # } else if (ci_res_name == 'norm'){
+  #   ci_res_name <- 'normal'
+  # }
 
   cat("\nResults:\n")
   X_temp <- paste(paste0(x$af4_res$X_names, "=", x$af4_res$X_values_1), collapse = ", ")
   cat(sprintf("  %-24s %s\n", "Predictor values:", X_temp))
   # cat(sprintf("  %-24s %s\n", "Mean estimate:",
   #             formatC(x$af4_res$mean_est_1, digits = digits, format = "f")))
-  ci_vals_1 <- x$ci_1[[ci_res_name]][4:5]
+  ci_vals_1 <- x$ci_1[[4]][4:5]
   ci_string_1 <- paste0("(", formatC(ci_vals_1[1], digits = digits, format = "f"),
                         ', ', formatC(ci_vals_1[2], digits = digits, format = "f"),
                         ')')
@@ -107,7 +107,7 @@ print.af4_ci <- function(x, digits = 4, ...){
     cat(sprintf("\n  %-24s %s\n", "Predictor values:", X_temp_2))
     # cat(sprintf("  %-24s %s\n", "Mean estimate:",
     #             formatC(x$af4_res$mean_est_2, digits = digits, format = "f")))
-    ci_vals_2 <- x$ci_2[[ci_res_name]][4:5]
+    ci_vals_2 <- x$ci_2[[4]][4:5]
     ci_string_2 <- paste0("(", formatC(ci_vals_2[1], digits = digits, format = "f"),
                           ', ', formatC(ci_vals_2[2], digits = digits, format = "f"),
                           ')')
@@ -116,7 +116,7 @@ print.af4_ci <- function(x, digits = 4, ...){
     if (!is.na(x$af4_res$contrast_est)){
       # cat(sprintf("\n  %-24s %s\n", paste0('Mean ', x$af4_res$contrast_type, ' estimate:'),
       #             formatC(x$af4_res$contrast_est, digits = digits, format = "f")))
-      ci_vals_contrast <- x$ci_contrast[[ci_res_name]][4:5]
+      ci_vals_contrast <- x$ci_contrast[[4]][4:5]
       ci_string_contrast <- paste0("(", formatC(ci_vals_contrast[1], digits = digits, format = "f"),
                             ', ', formatC(ci_vals_contrast[2], digits = digits, format = "f"),
                             ')')

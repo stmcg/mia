@@ -93,7 +93,7 @@ res
 #> 
 #> Setting:
 #>   Outcome variable type:       continuous
-#>   Auxiliary variable type(s):  binary (W)
+#>   Auxiliary variable(s) type:  binary (W)
 #> 
 #> Results:
 #>   Predictor values:            X1=0, X2=1
