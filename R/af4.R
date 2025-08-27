@@ -96,6 +96,15 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     }
     W_names[i] <- lhs_W
   }
+  for (i in 1:n_W){
+    W_model_temp <- W_model[[i]]
+    rhs_W <- all.vars(W_model_temp[[3]])
+    if (any(W_names[i:n_W] %in% rhs_W)){
+      bad_ind <- paste0(which(W_names[i:n_W] %in% rhs_W), collapse = ', ')
+      stop(paste0("Error in the specification of W_model. The model for component ", i, " (i.e., ", W_names[i], ") depends on the following component(s): ", bad_ind,
+                  ". The model for each component can only depend on previous components, not subsequent ones."), call. = FALSE)
+    }
+  }
 
   # Checking X_values_1 and X_values_2
   if (length(X_names) != length(X_values_1)){
