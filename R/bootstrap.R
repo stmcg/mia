@@ -58,8 +58,8 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
                X_values_1 = af4_res$X_values_1,
                X_values_2 = af4_res$X_values_2,
                contrast_type = af4_res$contrast_type,
-               Y_model = eval(af4_res$args$Y_model),
-               W_model = eval(af4_res$args$W_model),
+               Y_model = af4_res$Y_model,
+               W_model = af4_res$W_model,
                Y_type = af4_res$Y_type, W_type = af4_res$W_type,
                n_mc = af4_res$n_mc)
     if (!is.null(af4_res$X_values_2)){
@@ -74,7 +74,7 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
     return(out)
   }
 
-  boot_args$data <- eval(af4_res$args$data)
+  boot_args$data <- af4_res$data
   boot_args$statistic <- boot_func
   boot_args$R <- n_boot
   bres <- do.call(boot::boot, boot_args)

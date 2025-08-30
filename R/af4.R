@@ -207,8 +207,6 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     df_XW_2 <- NULL
   }
 
-  args <- as.list(match.call())[-1]
-
   out <- list(
     mean_est_1 = Y_mean,
     mean_est_2 = Y_mean_2,
@@ -220,7 +218,9 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     X_values_1 = X_values_1, X_values_2 = X_values_2,
     contrast_type = contrast_type,
     n_mc = n_mc,
-    args = args
+    Y_model = Y_model,
+    W_model = W_model,
+    data = data
   )
   if (return_simulated_data){
     out$simulated_data <- list(
