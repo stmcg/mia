@@ -2,10 +2,13 @@ Package: iai
 Type: Package
 Title: Incomplete Auxiliaries in Imputation
 Version: 0.1.0
-Author: Who wrote it
+Author: TBD
 Maintainer: Sean McGrath <sean.mcgrath514@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Implements methods to estimate conditional outcome means in 
+    settings with missingness-not-at-random and incomplete auxiliary variables. 
+    Specifically, this package implements the AF4 method in Mathur et al. 
+    (In preparation). The package supports continuous and binary outcomes, and 
+    supports auxiliary variables that are normal, binary, and categorical.
 License: GPL (>=3)
 Encoding: UTF-8
 LazyData: true
