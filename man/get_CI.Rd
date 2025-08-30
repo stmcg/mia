@@ -7,7 +7,7 @@
 get_CI(
   af4_res,
   n_boot = 1000,
-  type = "perc",
+  type = "bca",
   conf = 0.95,
   boot_args = list(),
   boot.ci_args = list()
@@ -43,7 +43,7 @@ res <- af4(data = dat.sim,
            X_names = c("X1", "X2"),
            X_values_1 = c(0, 1), X_values_2 = c(0, 0),
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
-res_ci <- get_CI(af4_res = res, n_boot = 50)
+res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
 res_ci
 
 
