@@ -252,7 +252,7 @@ sim_W_individual <- function(df, fit, type, n_mc, levels){
     W_sim <- apply(prob_W, 1, function(probs) {
       sample(levels, size = 1, prob = probs)
     })
-    W_sim <- as.factor(W_sim)
+    W_sim <- factor(W_sim, levels = levels)
   } else if (type == 'normal'){
     mean_W <- stats::predict(fit, newdata = df)
     sd_W <- summary(fit)$sigma
