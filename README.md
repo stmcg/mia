@@ -4,6 +4,8 @@
 # iai
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The `iai` package implements methods to estimate conditional outcome
