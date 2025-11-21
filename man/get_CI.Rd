@@ -10,7 +10,8 @@ get_CI(
   type = "bca",
   conf = 0.95,
   boot_args = list(),
-  boot.ci_args = list()
+  boot.ci_args = list(),
+  show_progress = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ get_CI(
 \item{boot_args}{A list of additional arguments to pass to the \code{\link[boot]{boot}} function. Note that this includes parallelization options.}
 
 \item{boot.ci_args}{A list of additional arguments to pass to the \code{\link[boot]{boot.ci}} function}
+
+\item{show_progress}{Logical scalar indicating whether to show a progress bar during bootstrap. Default is \code{TRUE}. The progress bar will not be displayed when parallelization is used.}
 }
 \value{
 An object of class "af4_ci". This object is a list with the following elements:
@@ -45,6 +48,10 @@ res <- af4(data = dat.sim,
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
 res_ci
+
+## Example with parallelization
+res_par <- get_CI(res, n_boot = 100, type = 'perc',
+                 boot_args = list(parallel = "snow", ncpus = 2))
 
 
 }

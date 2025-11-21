@@ -17,7 +17,7 @@ A data frame that contains 9,297 rows and the following columns:
 dat.sim
 }
 \description{
-This data set contains a simulated data based on DAG C in Mathur et al.
+This data set contains simulated data based on DAG C in Mathur et al.
 }
 \seealso{
 \code{\link{dat.sim}}

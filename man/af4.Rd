@@ -31,11 +31,11 @@ af4(
 
 \item{Y_model}{Formula for the outcome model.}
 
-\item{Y_type}{(Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}.  If this not supplied, the type will be inferred from the corresponding column in \code{data}.}
+\item{Y_type}{(Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}.  If this is not supplied, the type will be inferred from the corresponding column in \code{data}.}
 
 \item{W_model}{Formula for the auxiliary variable model. If the auxiliary variable is multivariate, this argument should be a list of model formulas, one for each component. The components will be simulated in the order they appear in the list.}
 
-\item{W_type}{(Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options are \code{"binary"}, \code{"categorical"}, and \code{"normal"}. If this not supplied, the type will be inferred from the corresponding column in \code{data}.}
+\item{W_type}{(Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options are \code{"binary"}, \code{"categorical"}, and \code{"normal"}. If this is not supplied, the type will be inferred from the corresponding column in \code{data}.}
 
 \item{n_mc}{Integer specifying the number of Monte Carlo samples to use.}
 

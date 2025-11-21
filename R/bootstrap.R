@@ -8,6 +8,7 @@
 #' @param conf Numeric scalar specifying the level of the confidence interval. The default is \code{0.95}.
 #' @param boot_args A list of additional arguments to pass to the \code{\link[boot]{boot}} function. Note that this includes parallelization options.
 #' @param boot.ci_args A list of additional arguments to pass to the \code{\link[boot]{boot.ci}} function
+#' @param show_progress Logical scalar indicating whether to show a progress bar during bootstrap. Default is \code{TRUE}. The progress bar will not be displayed when parallelization is used.
 #'
 #' @return An object of class "af4_ci". This object is a list with the following elements:
 #' \item{ci_1}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_1} in  \code{\link{af4}}.}
@@ -25,11 +26,15 @@
 #' res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
 #' res_ci
 #'
+#' ## Example with parallelization
+#' res_par <- get_CI(res, n_boot = 100, type = 'perc',
+#'                  boot_args = list(parallel = "snow", ncpus = 2))
+#'
 #'
 #' @export
 #'
 get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
-                   boot_args = list(), boot.ci_args = list()) {
+                   boot_args = list(), boot.ci_args = list(), show_progress = TRUE) {
 
   # Error checking for misunderstandings about how arguments are passed into the boot and boot.ci functions
   if (length(type) > 1){
@@ -49,6 +54,20 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
   }
   if ('conf' %in% names(boot.ci_args)){
     warning("The element 'conf' in the argument 'boot.ci_args' is not used. The level of confidence interval is instead specified by the argument 'conf' in the get_CI function", call. = FALSE)
+  }
+
+  # Create progress bar for bootstrap (if requested)
+  parallel_enabled <- (!is.null(boot_args$parallel) &&
+                       boot_args$parallel %in% c("multicore", "snow")) ||
+                      !is.null(boot_args$cl)
+
+  if (show_progress && n_boot > 1 && !parallel_enabled) {
+    pb <- progress::progress_bar$new(
+      format = "  Bootstrapping [:bar] :percent | Elapsed: :elapsed | Time Remaining: :eta",
+      total = n_boot, clear = FALSE, width = 80, show_after = 0
+    )
+  } else {
+    pb <- NULL
   }
 
   boot_func <- function(data, i){
@@ -71,6 +90,12 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
     } else {
       out <- c(fit$mean_est_1)
     }
+
+    # Update progress bar
+    if (!is.null(pb) && !pb$finished) {
+      pb$tick()
+    }
+
     return(out)
   }
 

@@ -65,7 +65,7 @@ test_that("af4 bootstrap CI works with ratio contrast", {
              Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 
   set.seed(1234)
-  res_ci <- get_CI(res, n_boot = 25, type = 'perc')
+  res_ci <- get_CI(res, n_boot = 50, type = 'perc')
 
   expect_true(!is.null(res_ci$ci_contrast))
   expect_true(inherits(res_ci$ci_contrast, "bootci"))
@@ -80,7 +80,7 @@ test_that("af4 bootstrap CI works with difference contrast", {
              Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 
   set.seed(1234)
-  res_ci <- get_CI(res, n_boot = 25, type = 'perc')
+  res_ci <- get_CI(res, n_boot = 50, type = 'perc')
 
   expect_true(!is.null(res_ci$ci_contrast))
   expect_true(inherits(res_ci$ci_contrast, "bootci"))
@@ -95,7 +95,7 @@ test_that("af4 bootstrap CI with contrast_type = 'none'", {
              Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 
   set.seed(1234)
-  res_ci <- get_CI(res, n_boot = 25, type = 'perc')
+  res_ci <- get_CI(res, n_boot = 50, type = 'perc')
 
   expect_true(!is.null(res_ci$ci_1))
   expect_true(!is.null(res_ci$ci_2))
