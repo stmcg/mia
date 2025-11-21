@@ -121,6 +121,27 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     contrast_type <- 'none'
   }
 
+  # Validating X_values for categorical predictors
+  for (i in 1:length(X_names)){
+    if (is.factor(data[[X_names[i]]])){
+      valid_levels <- levels(data[[X_names[i]]])
+      # Check X_values_1
+      if (!X_values_1[i] %in% valid_levels){
+        stop(paste0("The value ", X_values_1[i], " specified for predictor '", X_names[i], 
+                   "' in X_values_1 is not a valid level. Valid levels are: ", 
+                   paste(valid_levels, collapse = ", "), "."), call. = FALSE)
+      }
+      # Check X_values_2 if provided
+      if (!is.null(X_values_2)){
+        if (!X_values_2[i] %in% valid_levels){
+          stop(paste0("The value ", X_values_2[i], " specified for predictor '", X_names[i], 
+                     "' in X_values_2 is not a valid level. Valid levels are: ", 
+                     paste(valid_levels, collapse = ", "), "."), call. = FALSE)
+        }
+      }
+    }
+  }
+
   # Checking variable types are appropriately set
   if (!missing(W_type)){
     for (i in 1:n_W){
@@ -150,6 +171,14 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
   data_fit_Y <- data[R_X == 1 & R_W == 1 & R_Y == 1, ]
   data_fit_W <- data[R_X == 1 & R_W == 1, ]
 
+  # Checking for empty datasets after filtering
+  if (nrow(data_fit_Y) == 0){
+    stop("No complete cases found for fitting the outcome model (Y). All observations are missing at least one of: Y, X, or W. Please check the missingness patterns in your data.", call. = FALSE)
+  }
+  if (nrow(data_fit_W) == 0){
+    stop("No complete cases found for fitting the auxiliary variable model (W). All observations are missing at least one of: X or W. Please check the missingness patterns in your data.", call. = FALSE)
+  }
+
   # Fitting W model
   if (missing(W_type)){
     W_type <- rep(NA, times = n_W)
@@ -162,6 +191,13 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
       } else if (is.numeric(data[[W_names[i]]])){
         W_type[i] <- 'normal'
       }
+    }
+    # Check if type inference failed
+    failed_inference <- which(is.na(W_type))
+    if (length(failed_inference) > 0){
+      failed_vars <- paste(W_names[failed_inference], collapse = ", ")
+      stop(paste0("Unable to infer the type for auxiliary variable(s): ", failed_vars, 
+                 ". Please explicitly specify W_type for these variables. Valid options are 'binary', 'categorical', or 'normal'."), call. = FALSE)
     }
   }
 
@@ -178,6 +214,12 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
       Y_type <- 'binary'
     } else if (is.numeric(data$Y)){
       Y_type <- 'continuous'
+    } else {
+      Y_type <- NA
+    }
+    # Check if type inference failed
+    if (is.na(Y_type)){
+      stop("Unable to infer the type for the outcome variable Y. Please explicitly specify Y_type. Valid options are 'binary' or 'continuous'.", call. = FALSE)
     }
   }
   fit_Y <- safe_fit(variable_name = 'Y', variable_type = Y_type,
