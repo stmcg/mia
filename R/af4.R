@@ -13,8 +13,8 @@
 #' @param contrast_type (Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options are \code{"difference"}, \code{"ratio"}, and \code{"none"}.
 #' @param Y_model Formula for the outcome model.
 #' @param W_model Formula for the auxiliary variable model. If the auxiliary variable is multivariate, this argument should be a list of model formulas, one for each component. The components will be simulated in the order they appear in the list.
-#' @param W_type  (Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options are \code{"binary"}, \code{"categorical"}, and \code{"normal"}. If this not supplied, the type will be inferred from the corresponding column in \code{data}.
-#' @param Y_type (Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}.  If this not supplied, the type will be inferred from the corresponding column in \code{data}.
+#' @param W_type  (Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options are \code{"binary"}, \code{"categorical"}, and \code{"normal"}. If this is not supplied, the type will be inferred from the corresponding column in \code{data}.
+#' @param Y_type (Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}.  If this is not supplied, the type will be inferred from the corresponding column in \code{data}.
 #' @param n_mc Integer specifying the number of Monte Carlo samples to use.
 #' @param return_simulated_data Logical scalar indicating whether to return the simulated data set(s) containing the predictors and simulated auxiliary variable. Setting this argument to \code{TRUE} can substantially increase the size of the returned object, particularly when \code{n_mc} is large. The default is \code{FALSE}.
 #'

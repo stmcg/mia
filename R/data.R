@@ -1,6 +1,6 @@
 #' Simulated data set
 #'
-#' This data set contains a simulated data based on DAG C in Mathur et al.
+#' This data set contains simulated data based on DAG C in Mathur et al.
 #'
 #' @docType data
 #'

@@ -31,7 +31,7 @@
 get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
                    boot_args = list(), boot.ci_args = list()) {
 
-  # Error checking for misunderstandings about how arguments are based into the boot and boot.ci functions
+  # Error checking for misunderstandings about how arguments are passed into the boot and boot.ci functions
   if (length(type) > 1){
     stop("The argument 'type' must be of length 1.", call. = FALSE)
   }

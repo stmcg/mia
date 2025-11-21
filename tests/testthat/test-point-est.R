@@ -40,11 +40,11 @@ test_that("af4 point estimate unchanged: continuous W, continuous Y", {
   dat.temp <- dat.sim_contW[!is.na(dat.sim_contW$W), ]
   dat.sim_contW[!is.na(dat.sim_contW$W), 'W'] <- rnorm(n = nrow(dat.temp), mean = dat.temp$W)
 
-  res <- af4(data = dat.sim,
+  res <- af4(data = dat.sim_contW,
              X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
-  expect_equal(res$mean_est_1, 1.976748, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 1.995163, tolerance = 1e-5)
 })
 
 test_that("af4 point estimate unchanged: categorical W, continuous Y", {
@@ -58,7 +58,7 @@ test_that("af4 point estimate unchanged: categorical W, continuous Y", {
              X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
-  expect_equal(res$mean_est_1, 1.977175, tolerance = 1e-5)
+  expect_equal(res$mean_est_1, 1.977191, tolerance = 1e-5)
 })
 
 test_that("af4 point estimate unchanged: multivariate W, continuous Y", {

@@ -31,7 +31,7 @@ library(iai)
 
 #### Data Set
 
-We will use the example dataset `dat.sim` included the package. The
+We will use the example dataset `dat.sim` included in the package. The
 dataset contains 9,297 observations with a continuous outcome `Y`, a
 binary auxiliary variable `W`, and binary predictors `X1` and `X2`. The
 first 10 rows of `dat.sim` are:
