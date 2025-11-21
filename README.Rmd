@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/stmcg/iai/graph/badge.svg)](https://app.codecov.io/gh/stmcg/iai)
 <!-- badges: end -->
 
 The `iai` package implements methods to estimate conditional outcome means in settings with missingness-not-at-random and incomplete auxiliary variables. Specifically, this package implements the AF4 method in Mathur et al. (In preparation).

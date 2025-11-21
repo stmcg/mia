@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/stmcg/iai/graph/badge.svg)](https://app.codecov.io/gh/stmcg/iai)
 <!-- badges: end -->
 
 The `iai` package implements methods to estimate conditional outcome
