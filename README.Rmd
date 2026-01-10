@@ -13,29 +13,29 @@ knitr::opts_chunk$set(
 )
 ```
 
-# iai
+# mia
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/iai/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/stmcg/iai/graph/badge.svg)](https://app.codecov.io/gh/stmcg/iai)
+[![R-CMD-check](https://github.com/stmcg/mia/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/mia/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/stmcg/mia/graph/badge.svg)](https://app.codecov.io/gh/stmcg/mia)
 <!-- badges: end -->
 
-The `iai` package implements methods to estimate conditional outcome means in settings with missingness-not-at-random and incomplete auxiliary variables. Specifically, this package implements the AF4 method in Mathur et al. (In preparation).
+The `mia` package implements methods to estimate conditional outcome means in settings with missingness-not-at-random and incomplete auxiliary variables. Specifically, this package implements the MIA method in Mathur et al. (In preparation).
 
 ## Installation
 
-You can install the development version of `iai` from [GitHub](https://github.com/) with:
+You can install the development version of `mia` from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("stmcg/iai")
+devtools::install_github("stmcg/mia")
 ```
 
 ## Example
 
 We first load the package.
 ```{r}
-library(iai)
+library(mia)
 ```
 
 #### Data Set
@@ -45,29 +45,29 @@ We will use the example dataset `dat.sim` included in the package. The dataset c
 dat.sim[1:10,]
 ```
 
-#### AF4 Method
+#### MIA Method
 
-The AF4 method estimates $E_{AF4}[ Y | X=x ]$, which is identified by $\int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW$ where $R_W$ and $R_X$ are indicators of non-missing values of $W$ and $X$, respectively, and $M$ is an indicator of a complete case pattern (i.e., $Y$, $X$, and $W$ are non-missing). The AF4 method estimates $E_{AF4}[ Y | X=x]$ by fitting models for the conditional mean of $Y$ and conditional density of $W$ and performing Monte Carlo integration to compute the integral. 
+The MIA method estimates $\mu_{MIA}(x)$, which is identified by $\int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW$ where $R_W$ and $R_X$ are indicators of non-missing values of $W$ and $X$, respectively, and $M$ is an indicator of a complete case pattern (i.e., $Y$, $X$, and $W$ are non-missing). The MIA method estimates $\mu_{MIA}(x)$ by fitting models for the conditional mean of $Y$ and conditional density of $W$ and performing Monte Carlo integration to compute the integral. 
 
-The function `af4` implements the AF4 method to estimate $E_{AF4}[ Y | X=x_1 ]$ and, optionally, $E_{AF4}[ Y | X=x_2]$ as well as contrasts between $E_{AF4}[ Y | X=x_1 ]$ and $E_{AF4}[ Y | X=x_2 ]$ (differences, ratios). This function requires specifying the following models: 
+The function `mia` implements the MIA method to estimate $\mu_{MIA}(x_1)$ and, optionally, $\mu_{MIA}(x_2)$ as well as contrasts between $\mu_{MIA}(x_1)$ and $\mu_{MIA}(x_2)$ (differences, ratios). This function requires specifying the following models: 
 
 * `Y_model`: Formula for the outcome model
 * `W_model`: Formula for the auxiliary model when the auxiliary variable is univariate, or a list of formulas for each component of the auxiliary variable
 
 It also requires specifying the names of the variable(s) $X$ by `X_names` and their values $x_1$ and $x_2$ by `X_values_1` and `X_values_2`, respectively. 
 
-An application of `af4` to estimate $E_{AF4} [ Y | X=(0, 1)^\top ]$ and $E_{AF4} [ Y | X = (0, 0)^\top ]$ as well as their difference is given below:
+An application of `mia` to estimate $\mu_{MIA}((0, 1)^\top)$ and $\mu_{MIA}((0, 0)^\top)$ as well as their difference is given below:
 
 ```{r}
 set.seed(1234)
-res <- af4(data = dat.sim,
+res <- mia(data = dat.sim,
            X_names = c("X1", "X2"), 
            X_values_1 = c(0, 1), X_values_2 = c(0, 0),
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 res
 ```
 
-We can obtain 95\% confidence intervals around our estimates by applying the `get_CI` function to the output of the `af4` function. The `get_CI` function performs nonparametric bootstrap. Here, we use the percentile method with 100 bootstrap replicates (for ease of computation): 
+We can obtain 95\% confidence intervals around our estimates by applying the `get_CI` function to the output of the `mia` function. The `get_CI` function performs nonparametric bootstrap. Here, we use the percentile method with 100 bootstrap replicates (for ease of computation): 
 
 ```{r}
 get_CI(res, n_boot = 100, type = 'perc')

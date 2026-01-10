@@ -1,8 +1,8 @@
-#' Bootstrap-based confidence intervals for AF4
+#' Bootstrap-based confidence intervals for MIA
 #'
-#' This function applies nonparametric bootstrap to construct confidence intervals around the conditional mean estimates obtained by \code{\link{af4}}. This function is a wrapper for the \code{\link[boot]{boot}} and \code{\link[boot]{boot.ci}} functions from the \pkg{boot} package.
+#' This function applies nonparametric bootstrap to construct confidence intervals around the conditional mean estimates obtained by \code{\link{mia}}. This function is a wrapper for the \code{\link[boot]{boot}} and \code{\link[boot]{boot.ci}} functions from the \pkg{boot} package.
 #'
-#' @param af4_res Output from the \code{af4} function.
+#' @param mia_res Output from the \code{mia} function.
 #' @param n_boot Numeric scalar specifying the number of bootstrap replicates to use
 #' @param type Character string specifying the type of confidence interval. The options are \code{"norm"}, \code{"basic"}, \code{"perc"}, and \code{"bca"}.
 #' @param conf Numeric scalar specifying the level of the confidence interval. The default is \code{0.95}.
@@ -10,20 +10,20 @@
 #' @param boot.ci_args A list of additional arguments to pass to the \code{\link[boot]{boot.ci}} function
 #' @param show_progress Logical scalar indicating whether to show a progress bar during bootstrap. Default is \code{TRUE}. The progress bar will not be displayed when parallelization is used.
 #'
-#' @return An object of class "af4_ci". This object is a list with the following elements:
-#' \item{ci_1}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_1} in  \code{\link{af4}}.}
-#' \item{ci_2}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_2} in  \code{\link{af4}} (if applicable).}
-#' \item{ci_contrast}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the contrast between mean under \code{X_values_1} versus \code{X_values_2} in \code{\link{af4}} (if applicable).}
+#' @return An object of class "mia_ci". This object is a list with the following elements:
+#' \item{ci_1}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_1} in \code{\link{mia}}.}
+#' \item{ci_2}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_2} in \code{\link{mia}} (if applicable).}
+#' \item{ci_contrast}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the contrast between mean under \code{X_values_1} versus \code{X_values_2} in \code{\link{mia}} (if applicable).}
 #' \item{bres}{An object of class "boot" which contains the output of the \code{\link[boot]{boot}} function. Users can access the bootstrap replicates through the element \code{t} in this object.}
 #' \item{...}{additional elements}
 #'
 #' @examples
 #' set.seed(1234)
-#' res <- af4(data = dat.sim,
+#' res <- mia(data = dat.sim,
 #'            X_names = c("X1", "X2"),
 #'            X_values_1 = c(0, 1), X_values_2 = c(0, 0),
 #'            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
-#' res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
+#' res_ci <- get_CI(mia_res = res, n_boot = 50, type = 'perc')
 #' res_ci
 #'
 #' ## Example with parallelization
@@ -33,7 +33,7 @@
 #'
 #' @export
 #'
-get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
+get_CI <- function(mia_res, n_boot = 1000, type = 'bca', conf = 0.95,
                    boot_args = list(), boot.ci_args = list(), show_progress = TRUE) {
 
   # Error checking for misunderstandings about how arguments are passed into the boot and boot.ci functions
@@ -72,17 +72,17 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
 
   boot_func <- function(data, i){
     dat_boot    <- data[i, ]
-    fit <- af4(data = dat_boot,
-               X_names = af4_res$X_names,
-               X_values_1 = af4_res$X_values_1,
-               X_values_2 = af4_res$X_values_2,
-               contrast_type = af4_res$contrast_type,
-               Y_model = af4_res$Y_model,
-               W_model = af4_res$W_model,
-               Y_type = af4_res$Y_type, W_type = af4_res$W_type,
-               n_mc = af4_res$n_mc)
-    if (!is.null(af4_res$X_values_2)){
-      if (af4_res$contrast_type == 'none'){
+    fit <- mia(data = dat_boot,
+               X_names = mia_res$X_names,
+               X_values_1 = mia_res$X_values_1,
+               X_values_2 = mia_res$X_values_2,
+               contrast_type = mia_res$contrast_type,
+               Y_model = mia_res$Y_model,
+               W_model = mia_res$W_model,
+               Y_type = mia_res$Y_type, W_type = mia_res$W_type,
+               n_mc = mia_res$n_mc)
+    if (!is.null(mia_res$X_values_2)){
+      if (mia_res$contrast_type == 'none'){
         out <- c(fit$mean_est_1, fit$mean_est_2)
       } else {
         out <- c(fit$mean_est_1, fit$mean_est_2, fit$contrast_est)
@@ -99,7 +99,7 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
     return(out)
   }
 
-  boot_args$data <- af4_res$data
+  boot_args$data <- mia_res$data
   boot_args$statistic <- boot_func
   boot_args$R <- n_boot
   bres <- do.call(boot::boot, boot_args)
@@ -117,16 +117,16 @@ get_CI <- function(af4_res, n_boot = 1000, type = 'bca', conf = 0.95,
   }
   ci_1 <- bca_safe_ci(boot.ci_args, index = 1)
   ci_2 <- NULL; ci_contrast <- NULL
-  if (!is.null(af4_res$X_values_2)){
+  if (!is.null(mia_res$X_values_2)){
     ci_2 <- bca_safe_ci(boot.ci_args, index = 2)
-    if (af4_res$contrast_type != 'none'){
+    if (mia_res$contrast_type != 'none'){
       ci_contrast <- bca_safe_ci(boot.ci_args, index = 3)
     }
   }
 
   out <- list(ci_1 = ci_1, ci_2 = ci_2, ci_contrast = ci_contrast, bres = bres,
-              n_boot = n_boot, type = type, conf = conf, af4_res = af4_res)
-  class(out) <- 'af4_ci'
+              n_boot = n_boot, type = type, conf = conf, mia_res = mia_res)
+  class(out) <- 'mia_ci'
 
   return(out)
 

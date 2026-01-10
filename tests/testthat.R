@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(iai)
+library(mia)
 
-test_check("iai")
+test_check("mia")

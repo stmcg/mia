@@ -1,24 +1,24 @@
-#' AF4 Method
+#' MIA Method
 #'
-#' This function implements the AF4 method (Mathur et al., In preparation). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates
+#' This function implements the marginalization over incomplete auxiliaries (MIA) method (Mathur et al., In preparation). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates
 #' \deqn{
-#' E_{AF4} [ Y | X=x ] = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW.
+#' \mu_{MIA}(x) = \int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW.
 #' }
-#' The function supports estimating \eqn{E_{AF4} [ Y | X=x_1 ]} and, optionally, \eqn{E_{AF4} [ Y | X=x_2 ]} as well as contrasts between \eqn{E_{AF4} [ Y | X=x_1 ]} vs \eqn{E_{AF4} [ Y | X=x_2 ]} (differences, ratios).
+#' The function supports estimating \eqn{\mu_{MIA}(x_1)} and, optionally, \eqn{\mu_{MIA}(x_2)} as well as contrasts between \eqn{\mu_{MIA}(x_1)} vs \eqn{\mu_{MIA}(x_2)} (differences, ratios).
 #'
 #' @param data Data frame containing the observed data.
 #' @param X_names Vector of character strings specifying the name(s) of the predictor variable(s) \eqn{X}.
-#' @param X_values_1 Numeric vector specifying the value of the predictor variable(s) \eqn{X}, i.e. \eqn{x_1} in \eqn{E_{AF4} [ Y | X=x_1 ]}.
-#' @param X_values_2 (Optional) Numeric vector specifying an additional value of the predictor variable(s) \eqn{X}, i.e. \eqn{x_2} in \eqn{E_{AF4} [ Y | X=x_2 ]}.
-#' @param contrast_type (Optional) Character string specifying the type of contrast to use when comparing \eqn{E_{AF4} [ Y | X=x_1 ]} and \eqn{E_{AF4} [ Y | X=x_2 ]}. Options are \code{"difference"}, \code{"ratio"}, and \code{"none"}.
+#' @param X_values_1 Numeric vector specifying the value of the predictor variable(s) \eqn{X}, i.e. \eqn{x_1} in \eqn{\mu_{MIA}(x_1)}.
+#' @param X_values_2 (Optional) Numeric vector specifying an additional value of the predictor variable(s) \eqn{X}, i.e. \eqn{x_2} in \eqn{\mu_{MIA}(x_2)}.
+#' @param contrast_type (Optional) Character string specifying the type of contrast to use when comparing \eqn{\mu_{MIA}(x_1)} and \eqn{\mu_{MIA}(x_2)}. Options are \code{"difference"}, \code{"ratio"}, and \code{"none"}.
 #' @param Y_model Formula for the outcome model.
 #' @param W_model Formula for the auxiliary variable model. If the auxiliary variable is multivariate, this argument should be a list of model formulas, one for each component. The components will be simulated in the order they appear in the list.
 #' @param W_type  (Optional) Vector of character strings specifying the "type" of each auxiliary variable. Options are \code{"binary"}, \code{"categorical"}, and \code{"normal"}. If this is not supplied, the type will be inferred from the corresponding column in \code{data}.
-#' @param Y_type (Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}.  If this is not supplied, the type will be inferred from the corresponding column in \code{data}.
+#' @param Y_type (Optional) Character string specifying the "type" of the outcome variable. Options are \code{"binary"} and \code{"continuous"}. If this is not supplied, the type will be inferred from the corresponding column in \code{data}.
 #' @param n_mc Integer specifying the number of Monte Carlo samples to use.
 #' @param return_simulated_data Logical scalar indicating whether to return the simulated data set(s) containing the predictors and simulated auxiliary variable. Setting this argument to \code{TRUE} can substantially increase the size of the returned object, particularly when \code{n_mc} is large. The default is \code{FALSE}.
 #'
-#' @return An object of class "af4". This object is a list with the following elements:
+#' @return An object of class "mia". This object is a list with the following elements:
 #' \item{mean_est_1}{conditional outcome mean estimate under \code{X_values_1}}
 #' \item{mean_est_2}{conditional outcome mean estimate under \code{X_values_2}}
 #' \item{contrast_est}{contrast of conditional outcome mean estimates between \code{X_values_1} and \code{X_values_2}}
@@ -35,14 +35,14 @@
 #' \deqn{p( W | X=x, R_W = R_X = 1 ) = \prod_{j = 1}^p p( W_j | X=x, W_1, \dots, W_{j-1}, R_W = R_X = 1 )}
 #' and fits models for the components \eqn{p( W_j | X=x, W_1, \dots, W_{j-1}, R_W = R_X = 1 )}.
 #'
-#' In the second step, Monte Carlo integration is used to compute the integral in the identification formula for \eqn{E_{AF4} [ Y | X=x ]} based on the fitted models in the first step. More specifically, for iteration \eqn{i}, the following algorithm is performed. The value of \eqn{W} is first simulated from its estimated conditional distribution. When \eqn{W} is multivariate, the components of \eqn{W} are simulated sequentially from their fitted models. That is, \eqn{W_1} is simulated conditional on \eqn{x}, \eqn{W_2} is simulated conditional on \eqn{x, W_1}, and so on. Then, the mean of \eqn{Y} is estimated conditional on \eqn{x, W}. Finally, the average of the estimated means (across all iterations \eqn{i}) is taken as the estimate of \eqn{E_{AF4} [ Y | X=x ]}.
+#' In the second step, Monte Carlo integration is used to compute the integral in the identification formula for \eqn{\mu_{MIA}(x)} based on the fitted models in the first step. More specifically, for iteration \eqn{i}, the following algorithm is performed. The value of \eqn{W} is first simulated from its estimated conditional distribution. When \eqn{W} is multivariate, the components of \eqn{W} are simulated sequentially from their fitted models. That is, \eqn{W_1} is simulated conditional on \eqn{x}, \eqn{W_2} is simulated conditional on \eqn{x, W_1}, and so on. Then, the mean of \eqn{Y} is estimated conditional on \eqn{x, W}. Finally, the average of the estimated means (across all iterations \eqn{i}) is taken as the estimate of \eqn{\mu_{MIA}(x)}.
 #'
 #' @references
-#' Mathur M, Zhang W, McGrath S, Seaman S, Shpitser I. (In preparation). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}.
+#' Mathur MB, Seaman S, Zhang W, McGrath S, Shpitser I. (In preparation). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}.
 #'
 #' @examples
 #' set.seed(1234)
-#' af4(data = dat.sim,
+#' mia(data = dat.sim,
 #'     X_names = c("X1", "X2"),
 #'     X_values_1 = c(0, 1), X_values_2 = c(0, 0),
 #'     Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
@@ -50,7 +50,7 @@
 #'
 #' @export
 
-af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
+mia <- function(data, X_names, X_values_1, X_values_2 = NULL,
                 contrast_type,
                 Y_model, Y_type,
                 W_model, W_type,
@@ -127,15 +127,15 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
       valid_levels <- levels(data[[X_names[i]]])
       # Check X_values_1
       if (!X_values_1[i] %in% valid_levels){
-        stop(paste0("The value ", X_values_1[i], " specified for predictor '", X_names[i], 
-                   "' in X_values_1 is not a valid level. Valid levels are: ", 
+        stop(paste0("The value ", X_values_1[i], " specified for predictor '", X_names[i],
+                   "' in X_values_1 is not a valid level. Valid levels are: ",
                    paste(valid_levels, collapse = ", "), "."), call. = FALSE)
       }
       # Check X_values_2 if provided
       if (!is.null(X_values_2)){
         if (!X_values_2[i] %in% valid_levels){
-          stop(paste0("The value ", X_values_2[i], " specified for predictor '", X_names[i], 
-                     "' in X_values_2 is not a valid level. Valid levels are: ", 
+          stop(paste0("The value ", X_values_2[i], " specified for predictor '", X_names[i],
+                     "' in X_values_2 is not a valid level. Valid levels are: ",
                      paste(valid_levels, collapse = ", "), "."), call. = FALSE)
         }
       }
@@ -196,7 +196,7 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
     failed_inference <- which(is.na(W_type))
     if (length(failed_inference) > 0){
       failed_vars <- paste(W_names[failed_inference], collapse = ", ")
-      stop(paste0("Unable to infer the type for auxiliary variable(s): ", failed_vars, 
+      stop(paste0("Unable to infer the type for auxiliary variable(s): ", failed_vars,
                  ". Please explicitly specify W_type for these variables. Valid options are 'binary', 'categorical', or 'normal'."), call. = FALSE)
     }
   }
@@ -270,7 +270,7 @@ af4 <- function(data, X_names, X_values_1, X_values_2 = NULL,
       sim_data_2 = df_XW_2
     )
   }
-  class(out) <- 'af4'
+  class(out) <- 'mia'
   return(out)
 }
 

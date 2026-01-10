@@ -1,6 +1,6 @@
-test_that("af4 point estimate unchanged: binary W, continuous Y", {
+test_that("mia point estimate unchanged: binary W, continuous Y", {
   set.seed(1234)
-  res <- af4(data = dat.sim,
+  res <- mia(data = dat.sim,
              X_names = c("X1", "X2"),
              X_values_1 = c(0, 1), X_values_2 = c(0, 0), contrast_type = 'none',
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
@@ -9,9 +9,9 @@ test_that("af4 point estimate unchanged: binary W, continuous Y", {
   expect_equal(res$mean_est_2, -0.03232477, tolerance = 1e-5)
 })
 
-test_that("af4 bootstrap CIs unchanged: binary W, continuous Y", {
+test_that("mia bootstrap CIs unchanged: binary W, continuous Y", {
   set.seed(1234)
-  res <- af4(data = dat.sim,
+  res <- mia(data = dat.sim,
              X_names = c("X1", "X2"),
              X_values_1 = c(0, 1), X_values_2 = c(0, 0),
              Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
@@ -22,50 +22,50 @@ test_that("af4 bootstrap CIs unchanged: binary W, continuous Y", {
   expect_equal(res_ci$ci_1$percent[5], 2.247151, tolerance = 1e-5)
 })
 
-test_that("af4 point estimate unchanged: binary W, binary Y", {
+test_that("mia point estimate unchanged: binary W, binary Y", {
   set.seed(1234)
   dat.sim_contY <- dat.sim
   dat.sim_contY$Y <- ifelse(dat.sim_contY$Y > median(dat.sim_contY$Y, na.rm = TRUE) / 2, 1, 0)
 
-  res <- af4(data = dat.sim_contY,
+  res <- mia(data = dat.sim_contY,
              X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
   expect_equal(res$mean_est_1, 0.4274451, tolerance = 1e-5)
 })
 
-test_that("af4 point estimate unchanged: continuous W, continuous Y", {
+test_that("mia point estimate unchanged: continuous W, continuous Y", {
   set.seed(1234)
   dat.sim_contW <- dat.sim
   dat.temp <- dat.sim_contW[!is.na(dat.sim_contW$W), ]
   dat.sim_contW[!is.na(dat.sim_contW$W), 'W'] <- rnorm(n = nrow(dat.temp), mean = dat.temp$W)
 
-  res <- af4(data = dat.sim_contW,
+  res <- mia(data = dat.sim_contW,
              X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
   expect_equal(res$mean_est_1, 1.995163, tolerance = 1e-5)
 })
 
-test_that("af4 point estimate unchanged: categorical W, continuous Y", {
+test_that("mia point estimate unchanged: categorical W, continuous Y", {
   set.seed(1234)
   dat.sim_catW <- dat.sim
   W1_ind <- which(dat.sim_catW$W == 1); W1_n <- length(W1_ind)
   dat.sim_catW[W1_ind[1:round(W1_n / 2)], 'W'] <- 2
   dat.sim_catW$W <- as.factor(dat.sim_catW$W)
 
-  res <- af4(data = dat.sim_catW,
+  res <- mia(data = dat.sim_catW,
              X_names = c("X1", "X2"), X_values_1 = c(0, 1),
              Y_model = Y ~ W * X1 * X2, W_model = W ~ X1 * X2)
 
   expect_equal(res$mean_est_1, 1.977191, tolerance = 1e-5)
 })
 
-test_that("af4 point estimate unchanged: multivariate W, continuous Y", {
+test_that("mia point estimate unchanged: multivariate W, continuous Y", {
   set.seed(1234)
   dat.sim_multiW <- dat.sim
   dat.sim_multiW$W2 <- rnorm(nrow(dat.sim))
-  res <- af4(data = dat.sim_multiW,
+  res <- mia(data = dat.sim_multiW,
              X_names = c("X1", "X2"),
              X_values_1 = c(0, 1), X_values_2 = c(0, 0), contrast_type = 'none',
              Y_model = Y ~ W * X1 * X2,

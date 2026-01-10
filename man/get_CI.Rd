@@ -2,10 +2,10 @@
 % Please edit documentation in R/bootstrap.R
 \name{get_CI}
 \alias{get_CI}
-\title{Bootstrap-based confidence intervals for AF4}
+\title{Bootstrap-based confidence intervals for MIA}
 \usage{
 get_CI(
-  af4_res,
+  mia_res,
   n_boot = 1000,
   type = "bca",
   conf = 0.95,
@@ -15,7 +15,7 @@ get_CI(
 )
 }
 \arguments{
-\item{af4_res}{Output from the \code{af4} function.}
+\item{mia_res}{Output from the \code{mia} function.}
 
 \item{n_boot}{Numeric scalar specifying the number of bootstrap replicates to use}
 
@@ -30,23 +30,23 @@ get_CI(
 \item{show_progress}{Logical scalar indicating whether to show a progress bar during bootstrap. Default is \code{TRUE}. The progress bar will not be displayed when parallelization is used.}
 }
 \value{
-An object of class "af4_ci". This object is a list with the following elements:
-\item{ci_1}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_1} in  \code{\link{af4}}.}
-\item{ci_2}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_2} in  \code{\link{af4}} (if applicable).}
-\item{ci_contrast}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the contrast between mean under \code{X_values_1} versus \code{X_values_2} in \code{\link{af4}} (if applicable).}
+An object of class "mia_ci". This object is a list with the following elements:
+\item{ci_1}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_1} in \code{\link{mia}}.}
+\item{ci_2}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the mean under \code{X_values_2} in \code{\link{mia}} (if applicable).}
+\item{ci_contrast}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the contrast between mean under \code{X_values_1} versus \code{X_values_2} in \code{\link{mia}} (if applicable).}
 \item{bres}{An object of class "boot" which contains the output of the \code{\link[boot]{boot}} function. Users can access the bootstrap replicates through the element \code{t} in this object.}
 \item{...}{additional elements}
 }
 \description{
-This function applies nonparametric bootstrap to construct confidence intervals around the conditional mean estimates obtained by \code{\link{af4}}. This function is a wrapper for the \code{\link[boot]{boot}} and \code{\link[boot]{boot.ci}} functions from the \pkg{boot} package.
+This function applies nonparametric bootstrap to construct confidence intervals around the conditional mean estimates obtained by \code{\link{mia}}. This function is a wrapper for the \code{\link[boot]{boot}} and \code{\link[boot]{boot.ci}} functions from the \pkg{boot} package.
 }
 \examples{
 set.seed(1234)
-res <- af4(data = dat.sim,
+res <- mia(data = dat.sim,
            X_names = c("X1", "X2"),
            X_values_1 = c(0, 1), X_values_2 = c(0, 0),
            Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
-res_ci <- get_CI(af4_res = res, n_boot = 50, type = 'perc')
+res_ci <- get_CI(mia_res = res, n_boot = 50, type = 'perc')
 res_ci
 
 ## Example with parallelization
