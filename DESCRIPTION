@@ -1,6 +1,6 @@
 Package: mia
 Type: Package
-Title: Incomplete Auxiliaries in Imputation
+Title: Marginalization over Incomplete Auxiliaries
 Version: 0.1.0
 Author: c(person("Sean", "McGrath", 
              role = c("aut", "cre"),
@@ -21,8 +21,9 @@ Author: c(person("Sean", "McGrath",
 Maintainer: Sean McGrath <sean.mcgrath514@gmail.com>
 Description: Implements methods to estimate conditional outcome means in 
     settings with missingness-not-at-random and incomplete auxiliary variables. 
-    Specifically, this package implements the AF4 method in Mathur et al. 
-    (In preparation). The package supports continuous and binary outcomes, and 
+    Specifically, this package implements the marginalization over incomplete
+    auxiliaries (MIA) method in Mathur et al. (In preparation). 
+    The package supports continuous and binary outcomes, and 
     supports auxiliary variables that are normal, binary, and categorical.
 License: GPL (>=3)
 Encoding: UTF-8
