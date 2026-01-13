@@ -22,7 +22,7 @@ Maintainer: Sean McGrath <sean.mcgrath514@gmail.com>
 Description: Implements methods to estimate conditional outcome means in 
     settings with missingness-not-at-random and incomplete auxiliary variables. 
     Specifically, this package implements the marginalization over incomplete
-    auxiliaries (MIA) method in Mathur et al. (In preparation). 
+    auxiliaries (MIA) method. 
     The package supports continuous and binary outcomes, and 
     supports auxiliary variables that are normal, binary, and categorical.
 License: GPL (>=3)

@@ -12,8 +12,8 @@ coverage](https://codecov.io/gh/stmcg/mia/graph/badge.svg)](https://app.codecov.
 
 The `mia` package implements methods to estimate conditional outcome
 means in settings with missingness-not-at-random and incomplete
-auxiliary variables. Specifically, this package implements the MIA
-method in Mathur et al. (In preparation).
+auxiliary variables. Specifically, this package implements the
+marginalization over incomplete auxiliaries (MIA) method.
 
 ## Installation
 
@@ -46,30 +46,32 @@ dat.sim[1:10,]
 #> 1        NA  0 NA  0
 #> 2        NA  1  1 NA
 #> 3  6.066826  1  1  1
-#> 5  6.113787  1  1  1
-#> 6        NA  1  1 NA
+#> 4  6.113787  1  1  1
+#> 5        NA  1  1 NA
+#> 6        NA NA NA  0
 #> 7        NA NA NA  0
-#> 8        NA NA NA  0
-#> 9        NA  1 NA  0
-#> 10 6.439700  1  1 NA
-#> 11 6.859992  1 NA  1
+#> 8        NA  1 NA  0
+#> 9  6.439700  1  1 NA
+#> 10 6.859992  1 NA  1
 ```
 
 #### MIA Method
 
-The MIA method estimates $\mu_{MIA}(x)$, which is identified by
-$\int_{W} E [ Y | X=x, W, M=1 ] p( W | X=x, R_W = R_X = 1 ) dW$ where
-$R_W$ and $R_X$ are indicators of non-missing values of $W$ and $X$,
-respectively, and $M$ is an indicator of a complete case pattern (i.e.,
-$Y$, $X$, and $W$ are non-missing). The MIA method estimates
-$\mu_{MIA}(x)$ by fitting models for the conditional mean of $Y$ and
-conditional density of $W$ and performing Monte Carlo integration to
+The MIA method estimates the conditional outcome mean
+$\mu_{\text{MIA}}(x)$, which is identified by
+$$\int_{w} E [ Y | X=x, W=w, M=1 ] p( w | X=x, R_W = R_X = 1 ) dw$$
+where $R_W$ and $R_X$ are indicators of non-missing values of $W$ and
+$X$, respectively, and $M$ is an indicator of a complete case pattern
+(i.e., $Y$, $X$, and $W$ are non-missing). The MIA method estimates the
+identifying functional by fitting models for the conditional mean of $Y$
+and conditional density of $W$ and performing Monte Carlo integration to
 compute the integral.
 
-The function `mia` implements the MIA method to estimate
-$\mu_{MIA}(x_1)$ and, optionally, $\mu_{MIA}(x_2)$ as well as contrasts
-between $\mu_{MIA}(x_1)$ and $\mu_{MIA}(x_2)$ (differences, ratios).
-This function requires specifying the following models:
+The function `mia` implements the MIA method to obtain point estimates
+of the identifying functionals of $\mu_{\text{MIA}}(x_1)$ and
+$\mu_{\text{MIA}}(x_2)$ as well as contrasts between them (differences,
+ratios). This function requires specifying the following regression
+models:
 
 - `Y_model`: Formula for the outcome model
 - `W_model`: Formula for the auxiliary model when the auxiliary variable
@@ -80,8 +82,10 @@ It also requires specifying the names of the variable(s) $X$ by
 `X_names` and their values $x_1$ and $x_2$ by `X_values_1` and
 `X_values_2`, respectively.
 
-An application of `mia` to estimate $\mu_{MIA}((0, 1)^\top)$ and
-$\mu_{MIA}((0, 0)^\top)$ as well as their difference is given below:
+An application of `mia` to estimate $\mu_{\text{MIA}}((0, 1)^\top)$ and
+$\mu_{\text{MIA}}((0, 0)^\top)$ as well as their difference is given
+below. Note that we set a random number seed because the function
+involves performing Monte Carlo integration.
 
 ``` r
 set.seed(1234)
@@ -110,7 +114,7 @@ res
 We can obtain 95% confidence intervals around our estimates by applying
 the `get_CI` function to the output of the `mia` function. The `get_CI`
 function performs nonparametric bootstrap. Here, we use the percentile
-method with 100 bootstrap replicates (for ease of computation):
+method with 100 bootstrap replicates for ease of computation.
 
 ``` r
 get_CI(res, n_boot = 100, type = 'perc')

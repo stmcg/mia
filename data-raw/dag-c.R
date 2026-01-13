@@ -25,5 +25,6 @@ colnames(dat.sim) <- c('X2', 'Y', 'X1', 'W')
 
 dat.sim <- dat.sim[!apply(is.na(dat.sim), 1, all), ]
 dat.sim <- dat.sim[, c('Y', 'X1', 'X2', 'W')]
+rownames(dat.sim) <- 1:nrow(dat.sim)
 
 # usethis::use_data(dat.sim, overwrite = TRUE)

@@ -1,6 +1,7 @@
 #' Simulated data set
 #'
-#' This data set contains simulated data based on DAG C in Mathur et al.
+#' This data set was simulated to reflect a setting with
+#' missingness-not-at-random and an incomplete auxiliary variable.
 #'
 #' @docType data
 #'
@@ -12,7 +13,24 @@
 #'   \item{\code{W}}{A binary auxiliary variable.}
 #' }
 #'
-#' @seealso \code{\link{dat.sim}}
+#' @details
+#' \strong{Variable dependencies:} The underlying values of the variables were generated as follows:
+#' \itemize{
+#'   \item \code{X1} is generated independently.
+#'   \item \code{X2} depends on \code{X1}.
+#'   \item \code{W} depends on \code{X2}.
+#'   \item \code{Y} depends on \code{X1}, \code{X2}, and their interaction.
+#' }
+#'
+#' \strong{Missingness patterns:} The missingness patterns were generated as follows:
+#' \itemize{
+#'   \item Missingness in \code{X1}, \code{X2}, and \code{Y} depends on the
+#'     underlying (potentially unobserved) values of \code{W}.
+#'   \item Missingness in \code{W} is generated independently.
+#'   \item Rows where all variables are missing are removed from the dataset.
+#' }
+#'
+#' @seealso \code{\link{mia}}
 #'
 #' @keywords datasets
 "dat.sim"
