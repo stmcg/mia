@@ -82,8 +82,8 @@ It also requires specifying the names of the variable(s) $X$ by
 `X_names` and their values $x_1$ and $x_2$ by `X_values_1` and
 `X_values_2`, respectively.
 
-An application of `mia` to estimate $\mu_{\text{MIA}}((0, 1)^\top)$ and
-$\mu_{\text{MIA}}((0, 0)^\top)$ as well as their difference is given
+An application of `mia` to estimate $\mu_{\text{MIA}}(x_1 = 0, x_2 = 1)$ and
+$\mu_{\text{MIA}}(x_1 = 0, x_2 = 0)$ as well as their difference is given
 below. Note that we set a random number seed because the function
 involves performing Monte Carlo integration.
 
