@@ -327,4 +327,3 @@ safe_fit <- function(variable_type, variable_name, formula, data) {
   )
   return(fit)
 }
-
