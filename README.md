@@ -1,28 +1,28 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mia
+# miapack
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/stmcg/mia/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/mia/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/stmcg/miapack/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stmcg/miapack/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/stmcg/mia/graph/badge.svg)](https://app.codecov.io/gh/stmcg/mia)
+coverage](https://codecov.io/gh/stmcg/miapack/graph/badge.svg)](https://app.codecov.io/gh/stmcg/miapack)
 <!-- badges: end -->
 
-The `mia` package implements methods to estimate conditional outcome
+The `miapack` package implements methods to estimate conditional outcome
 means in settings with missingness-not-at-random and incomplete
 auxiliary variables. Specifically, this package implements the
 marginalization over incomplete auxiliaries (MIA) method.
 
 ## Installation
 
-You can install the development version of `mia` from
+You can install the development version of `miapack` from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("stmcg/mia")
+devtools::install_github("stmcg/miapack")
 ```
 
 ## Example
@@ -30,7 +30,7 @@ devtools::install_github("stmcg/mia")
 We first load the package.
 
 ``` r
-library(mia)
+library(miapack)
 ```
 
 #### Data Set
