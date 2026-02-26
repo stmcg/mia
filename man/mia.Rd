@@ -52,7 +52,7 @@ An object of class "mia". This object is a list with the following elements:
 \item{...}{additional elements}
 }
 \description{
-This function implements the marginalization over incomplete auxiliaries (MIA) method. For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates the conditional outcome mean identified by
+This function implements the marginalization over incomplete auxiliaries (MIA) method (Mathur et al. 2026). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates the conditional outcome mean identified by
 \deqn{
 \mu_{\text{MIA}}(x) = \int_{w} E [ Y | X=x, W=w, M=1 ] p( w | X=x, R_W = R_X = 1 ) dw.
 }
@@ -76,6 +76,9 @@ mia(data = dat.sim,
     Y_model = Y ~ W + X1 + X2, W_model = W ~ X1 + X2)
 
 
+}
+\references{
+Mathur MB, Seaman S, Zhang W, McGrath S, Shpitser I. (2026). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}. \url{doi.org/10.13140/RG.2.2.30750.19524}.
 }
 \seealso{
 \code{\link{print.mia}}, \code{\link{get_CI}}

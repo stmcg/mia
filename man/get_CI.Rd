@@ -36,6 +36,8 @@ An object of class "mia_ci". This object is a list with the following elements:
 \item{ci_contrast}{An object of class "boot.ci" which contains the output of the \code{\link[boot]{boot.ci}} function applied for the confidence interval around the contrast between mean under \code{X_values_1} versus \code{X_values_2} in \code{\link{mia}} (if applicable).}
 \item{bres}{An object of class "boot" which contains the output of the \code{\link[boot]{boot}} function. Users can access the bootstrap replicates through the element \code{t} in this object.}
 \item{...}{additional elements}
+
+Mathur MB, Seaman S, Zhang W, McGrath S, Shpitser I. (2026). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}. \url{doi.org/10.13140/RG.2.2.30750.19524}.
 }
 \description{
 This function applies nonparametric bootstrap to construct confidence intervals around the conditional mean estimates obtained by \code{\link{mia}}. This function is a wrapper for the \code{\link[boot]{boot}} and \code{\link[boot]{boot.ci}} functions from the \pkg{boot} package.

@@ -1,6 +1,6 @@
 #' MIA Method
 #'
-#' This function implements the marginalization over incomplete auxiliaries (MIA) method. For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates the conditional outcome mean identified by
+#' This function implements the marginalization over incomplete auxiliaries (MIA) method (Mathur et al. 2026). For an outcome variable \eqn{Y}, predictor variable \eqn{X}, and auxiliary variable \eqn{W}, this function estimates the conditional outcome mean identified by
 #' \deqn{
 #' \mu_{\text{MIA}}(x) = \int_{w} E [ Y | X=x, W=w, M=1 ] p( w | X=x, R_W = R_X = 1 ) dw.
 #' }
@@ -39,6 +39,9 @@
 #'
 #' \emph{Step 2:} Monte Carlo integration is used to compute the integral in the identifying functional for \eqn{\mu_{\text{MIA}}(x)} based on the fitted models in the first step. More specifically, for iteration \eqn{i}, the following algorithm is performed. The value of \eqn{W} is first simulated from its estimated conditional distribution. When \eqn{W} is multivariate, the components of \eqn{W} are simulated sequentially from their fitted models. That is, \eqn{W_1} is simulated conditional on \eqn{x}, \eqn{W_2} is simulated conditional on \eqn{x, W_1}, and so on. Then, the mean of \eqn{Y} is estimated conditional on \eqn{x, W}. Finally, the average of the estimated means (across all iterations \eqn{i}) is taken as the estimate of \eqn{\mu_{\text{MIA}}(x)}.
 #'
+#'
+#' @references
+#' Mathur MB, Seaman S, Zhang W, McGrath S, Shpitser I. (2026). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}. \url{doi.org/10.13140/RG.2.2.30750.19524}.
 #' @examples
 #' set.seed(1234)
 #' mia(data = dat.sim,

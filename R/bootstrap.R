@@ -17,6 +17,8 @@
 #' \item{bres}{An object of class "boot" which contains the output of the \code{\link[boot]{boot}} function. Users can access the bootstrap replicates through the element \code{t} in this object.}
 #' \item{...}{additional elements}
 #'
+#' Mathur MB, Seaman S, Zhang W, McGrath S, Shpitser I. (2026). \emph{Estimating conditional means under missingness-not-at-random with incomplete auxiliary variables}. \url{doi.org/10.13140/RG.2.2.30750.19524}.
+#'
 #' @examples
 #' set.seed(1234)
 #' res <- mia(data = dat.sim,
